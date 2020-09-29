@@ -1,3 +1,3 @@
-struct KyberUtils {
+struct KybernetesCoreLocation {
     var text = "Hello, World!"
 }
