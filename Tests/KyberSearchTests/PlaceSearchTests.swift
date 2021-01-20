@@ -1,12 +1,11 @@
 import XCTest
-@testable import PlaceSearch
+@testable import KyberSearch
 
 final class PlaceSearchTests: XCTestCase {
     func testExample() {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct
         // results.
-        XCTAssertEqual(PlaceSearch().text, "Hello, World!")
     }
 
     static var allTests = [
