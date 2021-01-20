@@ -63,11 +63,13 @@ public let kyberSearchReducer = Reducer<KyberSearch, KyberSearchAction, KyberSea
         state.result = nil
         return.none
       }
+      struct QueryId: Hashable {}
       
       state.query = query
       state.isCancelVisible = true
       state.isLoading = true
       return Effect(value: .geocoder(.locationFromAddress(query)))
+      
       
     case let .onEditingChanged(changed):
       // guard state.query.isEmpty else {
@@ -88,12 +90,12 @@ public let kyberSearchReducer = Reducer<KyberSearch, KyberSearchAction, KyberSea
       
     case .didSelect(_):
       return Effect(value: .cleanup)
-  
+      
     case let .geocoder(.geocodingResponse(.success(result))):
       state.result = result.first
       state.isLoading = false
       return .none
-
+      
     case .geocoder(.geocodingResponse(.failure)):
       state.result = nil
       state.isLoading = false

@@ -14,14 +14,14 @@ public struct PlaceSearchView: View {
   }
   
   let store: Store<KyberSearch, KyberSearchAction>
-  @Environment(\.screenPosition) var screenPosition
+  @Environment(\.resultPosition) var resultPosition
   
   public var body: some View {
     WithViewStore(store) { viewStore in
       VStack(alignment: .leading) {
-        switch screenPosition {
+        switch resultPosition {
         case .top:
-          SearchBarView(store: store).padding(12)
+          SearchBarView(store: store)
           if let placemark = viewStore.result {
             Divider()
             ResultView(store: store, placemark: placemark)
@@ -32,7 +32,10 @@ public struct PlaceSearchView: View {
             ResultView(store: store, placemark: placemark)
             Divider()
           }
-          SearchBarView(store: store).padding(12)
+          SearchBarView(store: store)
+        
+        case .none:
+          SearchBarView(store: store)
         }
       }
       //FIXME: conditional #if os(macOS) style
@@ -47,18 +50,19 @@ public struct PlaceSearchView: View {
 }
 
 
-public enum SearchScreenPosition {
+public enum SearchResultPosition {
+  case none
   case top
   case bottom
 }
 
-public struct PlaceSearchSettings: EnvironmentKey {
-  public static var defaultValue: SearchScreenPosition = .top
+public struct SearchSettings: EnvironmentKey {
+  public static var defaultValue: SearchResultPosition = .top
 }
 
 public extension EnvironmentValues {
-  var screenPosition: SearchScreenPosition {
-    get { self[PlaceSearchSettings.self] }
-    set { self[PlaceSearchSettings.self] = newValue }
+  var resultPosition: SearchResultPosition {
+    get { self[SearchSettings.self] }
+    set { self[SearchSettings.self] = newValue }
   }
 }

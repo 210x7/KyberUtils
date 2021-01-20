@@ -1,5 +1,5 @@
 //
-//  CurrentPlace.swift
+//  CurrentLocation.swift
 //  
 //
 //  Created by Cristian Díaz on 31.08.20.
@@ -9,7 +9,7 @@ import ComposableArchitecture
 import ComposableCoreLocation
 import Foundation
 
-public struct CurrentPlace: Equatable {
+public struct CurrentLocation: Equatable {
   public init(place: CLPlacemark? = nil, geocoder: GeocoderState = GeocoderState()) {
     self.place = place
     self.geocoder = geocoder
@@ -19,13 +19,13 @@ public struct CurrentPlace: Equatable {
   var geocoder: GeocoderState
 }
 
-public enum CurrentPlaceAction: Equatable {
+public enum CurrentLocationAction: Equatable {
   case geocoder(GeocoderAction)
   case placeFrom(location: Location)
   case didFound
 }
 
-public struct CurrentPlaceEnvironment {
+public struct CurrentLocationEnvironment {
   public init(geocoderClient: GeocoderClient, mainQueue: AnySchedulerOf<DispatchQueue>) {
     self.geocoderClient = geocoderClient
     self.mainQueue = mainQueue
@@ -35,10 +35,10 @@ public struct CurrentPlaceEnvironment {
   var mainQueue: AnySchedulerOf<DispatchQueue>
 }
 
-public let currentPlaceReducer = Reducer<CurrentPlace, CurrentPlaceAction, CurrentPlaceEnvironment>.combine(
+public let currentLocationReducer = Reducer<CurrentLocation, CurrentLocationAction, CurrentLocationEnvironment>.combine(
   geocoderReducer.pullback(
-    state: \CurrentPlace.geocoder,
-    action: /CurrentPlaceAction.geocoder,
+    state: \CurrentLocation.geocoder,
+    action: /CurrentLocationAction.geocoder,
     environment: {
       GeocoderEnvironment(
         geocoderClient: $0.geocoderClient,

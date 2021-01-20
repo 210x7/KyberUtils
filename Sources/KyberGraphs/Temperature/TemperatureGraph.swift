@@ -102,7 +102,7 @@ struct TemperaturePlotView: View {
     #if os(iOS)
     return (index == selectedIndex) ? Color.orange : Color(.systemBackground)
     #else
-    return Color(.windowBackgroundColor)
+    return Color(.orange)
     #endif
   }
 }

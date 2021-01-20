@@ -19,7 +19,7 @@ public struct ResultView: View {
   let store: Store<KyberSearch, KyberSearchAction>
   let placemark: CLPlacemark
   @Environment(\.colorScheme) var colorScheme
-  @Environment(\.screenPosition) var screenPosition
+  @Environment(\.resultPosition) var resultPosition
   
   public var body: some View {
     WithViewStore(store) { viewStore in
@@ -28,8 +28,8 @@ public struct ResultView: View {
         label: {
           VStack {
             if let location = placemark.location {
-              switch screenPosition {
-              case .top:
+              switch resultPosition {
+              case .top, .none:
                 HStack {
                   Text("—")
                   VStack(alignment: .leading) {

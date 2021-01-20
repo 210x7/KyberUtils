@@ -21,6 +21,7 @@ public struct SearchBarView: View {
         ZStack {
           if viewStore.isLoading {
             ProgressView()
+              .scaleEffect(0.5, anchor: .center)
           } else {
             Image(systemName: "magnifyingglass")
               .font(.callout)
@@ -28,10 +29,10 @@ public struct SearchBarView: View {
               //.foregroundColor(Color(.secondaryLabel))
           }
         }
-        .frame(width: 16, height: 16)
-        
+        .frame(width: 22, height: 22)
+
         TextField(
-          "Search",
+          "Search for a place or address",
           text: viewStore.binding(
             get: { $0.query },
             send: KyberSearchAction.onQueryChanged
@@ -39,7 +40,8 @@ public struct SearchBarView: View {
           onEditingChanged: { viewStore.send(.onEditingChanged($0)) },
           onCommit: { viewStore.send(.onCommit) }
         )
-        .font(.headline)
+        .textFieldStyle(RoundedBorderTextFieldStyle())
+//        .font(.headline)
         .disableAutocorrection(true)
         //FIXME: conditional #if os(macOS) style
         //.keyboardType(.alphabet)
@@ -49,6 +51,7 @@ public struct SearchBarView: View {
             action: { viewStore.send(.cleanup) },
             label: {
               Image(systemName: "xmark.circle.fill")
+                .font(.callout)
                 .frame(width: 22, height: 22)
             }
           )

@@ -8,6 +8,15 @@
 //import LightChart
 import SwiftUI
 
+public let precipitationFormatter: MeasurementFormatter = {
+  let formatter = MeasurementFormatter()
+  formatter.unitStyle = .short
+  formatter.unitOptions = .providedUnit
+  formatter.numberFormatter.maximumFractionDigits = 0
+  return formatter
+}()
+
+
 public struct RainIntensityGraph: View {
   public init(values: [Measurement<UnitLength>?], selectedIndex: Int) {
     self.values = values
@@ -55,38 +64,40 @@ public struct RainIntensityGraph: View {
           GeometryReader { geometry in
             ScrollView(.horizontal) {
               VStack {
+                Text("...")
                 Spacer()
                 HStack(alignment: .bottom, spacing: 1) {
                   ForEach(values.indices) { index in
-                    
-                    VStack {
-                      if index == selectedIndex {
-                        Image(systemName: "arrow.down")
-                          .foregroundColor(.blue)
-                          .font(.subheadline)
-                      }
-                      
-                      if values.indices.contains(index),
-                         let value = values[index]?.value {
-                        Rectangle()
-                          .fill(Color.white)
-                          //.cornerRadius(25, corners: [.topLeft, .topRight])
-                          .cornerRadius(25)
-                          .frame(
-                            width: 5,
-                            height: ruleOfThree(
-                              base: maxIntensity.subjectiveScale,
-                              extreme: Double(geometry.size.height),
-                              given: value
+                    ZStack {
+                      VStack {
+                        if index == selectedIndex {
+                          Image(systemName: "arrow.down")
+                            .foregroundColor(.blue)
+                            .font(.subheadline)
+                        }
+                        
+                        if values.indices.contains(index),
+                           let value = values[index]?.value {
+                          Rectangle()
+                            .fill(Color.white)
+                            //.cornerRadius(25, corners: [.topLeft, .topRight])
+                            .cornerRadius(25)
+                            .frame(
+                              width: 5,
+                              height: ruleOfThree(
+                                base: maxIntensity.subjectiveScale,
+                                extreme: Double(geometry.size.height),
+                                given: value
+                              )
                             )
-                          )
-                      } else {
-                        Rectangle().fill(Color.red).frame(height: 0)
+                        } else {
+                          Rectangle().fill(Color.red).frame(height: 0)
+                        }
                       }
                     }
                   }
+                  .drawingGroup()
                 }
-                .drawingGroup()
               }
             }
             // .background(
@@ -112,6 +123,14 @@ public struct RainIntensityGraph: View {
               timestamps: []
             )
             
+          }
+          if values.indices.contains(selectedIndex),
+             let measurement = values[selectedIndex] {
+            Text(precipitationFormatter.string(from: measurement))
+              .font(.largeTitle)
+          } else {
+            Text("--")
+              .font(.largeTitle)
           }
         }
       }

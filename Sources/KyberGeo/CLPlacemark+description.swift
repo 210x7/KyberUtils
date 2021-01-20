@@ -42,7 +42,7 @@ public extension CLPlacemark {
     let difference = placemarkTimezone.secondsFromGMT() - timezone.secondsFromGMT()
     let hours = difference / (60 * 60)
     
-    guard hours > 0 else { return nil }
+    guard hours != 0 else { return nil }
     //TODO: make proper localization (plurals, etc...)
     return "\(hours.signum() == 1 ? "+" : "")"
       + "\(hours)"
