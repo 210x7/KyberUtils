@@ -6,107 +6,55 @@
 //
 
 import SwiftUI
-
+import KyberCommon
 /// https://www.quora.com/What-is-the-highest-temperature-a-human-being-can-survive
 ///
 /// TL:DR numbers:
-/// Dry air: 120+ °C (248+ °F) short term, 70+ °C (158+ °F) long term (with access to water at /co oler temperatures).
+/// Dry air: 120+ °C (248+ °F) short term, 70+ °C (158+ °F) long term (with access to water at /cooler temperatures).
 /// Tropical air: 60+ °C (140 °F) short term, 47 °C (117 °F) long term.
 /// Saturated air: 48 °C (118 °F) short term, 35 °C (95 °F) long term.
 /// Water: 46° C (115 °F) short term, 41°C (106 °F) long term.
 
-// TODO: consolidate formatters
-public let temperatureFormatter: MeasurementFormatter = {
-  let formatter = MeasurementFormatter()
-  formatter.unitStyle = .short
-  formatter.numberFormatter.maximumFractionDigits = 0
-  return formatter
-}()
+public typealias TemperatureData = (date: Date, measurement: Measurement<UnitTemperature>?)
 
 public struct TemperatureGraph: View {
-  public init(values: [Measurement<UnitTemperature>?], selectedIndex: Int) {
-    self.values = values
+  public init(data: [TemperatureData], selectedIndex: Int) {
+    self.data = data
     self.selectedIndex = selectedIndex
   }
   
-  let values: [Measurement<UnitTemperature>?]
+  let data: [TemperatureData]
   let selectedIndex: Int
   
   @Environment(\.colorScheme) var colorScheme
   
   public var body: some View {
     ZStack {
-      if values.isEmpty {
+      if data.isEmpty {
         Label("No data", systemImage: "xmark.shield.fill")
           .foregroundColor(.secondary)
           .padding()
       }
       else {
         TemperaturePlotView(
-          values: values,
+          data: data,
           selectedIndex: selectedIndex
         )
         
-        if values.indices.contains(selectedIndex),
-           let measurement = values[selectedIndex] {
-          Text(temperatureFormatter.string(from: measurement))
-            .font(.largeTitle)
-        } else {
-          Text("--")
-            .font(.largeTitle)
-        }
+        //        if values.indices.contains(selectedIndex),
+        //           let measurement = values[selectedIndex] {
+        //          Text(temperatureFormatter.string(from: measurement))
+        //            .font(.largeTitle)
+        //        } else {
+        //          Text("--")
+        //            .font(.largeTitle)
+        //        }
         
       }
-    }
-    .frame(minHeight: 100)
+    }.padding()
+    
   }
 }
-
-struct TemperaturePlotView: View {
-  let values: [Measurement<UnitTemperature>?]
-  let selectedIndex: Int
-  
-  var body: some View {
-    GeometryReader { geometry in
-      ScrollView(.horizontal) {
-        VStack(spacing: 0) {
-          Spacer()
-          
-          HStack(alignment: .bottom, spacing: 1) {
-            ForEach(values.indices) { index in
-              
-              if values.indices.contains(index),
-                 let measurement = values[index] {
-                
-                Rectangle()
-                  .fill(color(for: index))
-                  .frame(
-                    width: 5,
-                    height: ruleOfThree(
-                      base: 100, //TODO: currently only localized for metric system
-                      extreme: Double(geometry.size.height),
-                      given: measurement.value
-                    )
-                  )
-              } else {
-                Rectangle().fill(Color.red).frame(height: 1)
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  
-  func color(for index: Int) -> Color {
-    #if os(iOS)
-    return (index == selectedIndex) ? Color.orange : Color(.systemBackground)
-    #else
-    return Color(.orange)
-    #endif
-  }
-}
-
 
 // VStack {
 //   if values.indices.contains(index),
@@ -133,3 +81,17 @@ struct TemperaturePlotView: View {
 //     Rectangle().fill(Color.red).frame(height: 1)
 //   }
 // }
+
+
+
+
+//                Rectangle()
+//                  .fill(color(for: index))
+//                  .frame(
+//                    width: 5,
+//                    height: ruleOfThree(
+//                      base: 100, //TODO: currently only localized for metric system
+//                      extreme: Double(geometry.size.height),
+//                      given: measurement.value
+//                    )
+//                  )

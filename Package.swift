@@ -73,12 +73,10 @@ let package = Package(
     ),
     .target(
       name: "KyberCommon",
-      dependencies: [
-        //.product(name: "LightChart", package: "LightChart")
-      ]),
+      dependencies: ["KyberGeo"]),
     .testTarget(
       name: "KyberCommonTests",
-      dependencies: []
+      dependencies: ["KyberCommon"]
     ),
   ]
 )

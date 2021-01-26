@@ -48,7 +48,7 @@ public let geocoderReducer = Reducer<GeocoderState, GeocoderAction, GeocoderEnvi
         .requestForwardGeocoding(address)
         .receive(on: environment.mainQueue)
         .catchToEffect()
-        .debounce(id: QueryId(), for: 0.3, scheduler: environment.mainQueue)
+        .debounce(id: QueryId(), for: 0.5, scheduler: environment.mainQueue)
         .map(GeocoderAction.geocodingResponse)
       
     case let .addressFromLocation(location):
@@ -57,7 +57,7 @@ public let geocoderReducer = Reducer<GeocoderState, GeocoderAction, GeocoderEnvi
         .requestReverseGeocoding(location)
         .receive(on: environment.mainQueue)
         .catchToEffect()
-        .debounce(id: QueryId(), for: 0.3, scheduler: environment.mainQueue)
+        .debounce(id: QueryId(), for: 0.5, scheduler: environment.mainQueue)
         .map(GeocoderAction.geocodingResponse)
       
     case let .geocodingResponse(.success(result)):
