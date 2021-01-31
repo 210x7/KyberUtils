@@ -31,11 +31,10 @@ struct TemperaturePlotView: View {
   
   var body: some View {
     GeometryReader { geometry in
-      
       let columnWidth = geometry.size.width / CGFloat(data.count)
       ZStack {
-        VStack(spacing: 0) {
-          Text("max: " + temperatureFormatter.string(from: max))
+        VStack(alignment: .leading, spacing: 0) {
+          Text("max: " + temperatureFormatter.string(from: max)).font(.caption)
           // Divider()
           HStack(spacing: 0) {
             ForEach(data, id: \.date) { data in
@@ -50,13 +49,11 @@ struct TemperaturePlotView: View {
           }
           .frame(height: geometry.size.height)
           // Divider()
-          Text("min: " + temperatureFormatter.string(from: min))
+          Text("min: " + temperatureFormatter.string(from: min)).font(.caption)
         }
         
         VStack(alignment: .leading, spacing: 0) {
-          
           //MARK: Over 0
-          
           HStack(alignment: .bottom, spacing: 0) {
             ForEach(data.indices) { index in
               if data.indices.contains(index), let measurement = data[index].measurement {
@@ -76,9 +73,7 @@ struct TemperaturePlotView: View {
               }
             }
           }
-          
-          //MARK: Below 0
-          
+          //MARK: Below 0          
           HStack(alignment: .top, spacing: 0) {
             ForEach(data.indices) { index in
               if data.indices.contains(index), let measurement = data[index].measurement {

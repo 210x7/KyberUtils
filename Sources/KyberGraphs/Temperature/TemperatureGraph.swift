@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import KyberCommon
+
 /// https://www.quora.com/What-is-the-highest-temperature-a-human-being-can-survive
 ///
 /// TL:DR numbers:
@@ -51,7 +51,7 @@ public struct TemperatureGraph: View {
         //        }
         
       }
-    }.padding()
+    }.padding([.top, .bottom])
     
   }
 }
