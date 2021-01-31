@@ -5,41 +5,35 @@
 //  Created by Cristian Díaz on 06.09.20.
 //
 
-//import LightChart
 import SwiftUI
+//import KyberCommon
 
-public let precipitationFormatter: MeasurementFormatter = {
-  let formatter = MeasurementFormatter()
-  formatter.unitStyle = .short
-  formatter.unitOptions = .providedUnit
-  formatter.numberFormatter.maximumFractionDigits = 0
-  return formatter
-}()
+public typealias RainData = (date: Date, measurement: Measurement<UnitLength>?)
 
 
 public struct RainIntensityGraph: View {
-  public init(values: [Measurement<UnitLength>?], selectedIndex: Int) {
-    self.values = values
+  public init(data: [RainData], selectedIndex: Int) {
+    self.data = data
     self.selectedIndex = selectedIndex
   }
   
-  let values: [Measurement<UnitLength>?]
+  let data: [RainData]
   let selectedIndex: Int
   
   @Environment(\.colorScheme) var colorScheme
   
-  var intensities: [RainIntensity] {
+  var intensities: [RainIntensityType] {
     guard
-      let max = values.compactMap({ $0 }).max(),
+      let max = data.compactMap({ $0.measurement }).max(),
       max.value > 0.0
     else { fatalError() }
-    return RainIntensity.allCases
+    return RainIntensityType.allCases
       .filter {
-        $0.amount.lowerBound <= max.value + RainIntensity.moderate.amount.lowerBound
+        $0.amount.lowerBound <= max.value + RainIntensityType.moderate.amount.lowerBound
       }
   }
   
-  var maxIntensity: RainIntensity {
+  var maxIntensity: RainIntensityType {
     intensities.last ?? .light
   }
   
@@ -49,90 +43,78 @@ public struct RainIntensityGraph: View {
   
   public var body: some View {
     ZStack(alignment: Alignment(horizontal: .center, vertical: .bottom)) {
-      if values.isEmpty {
+      if data.isEmpty {
         Label("No data", systemImage: "xmark.shield.fill")
           .foregroundColor(.secondary)
           .padding()
       }
-      else if values.compactMap({ $0?.value }).reduce(0, +) == 0 {
+      else if data.compactMap({ $0.measurement?.value }).reduce(0, +) == 0 {
         Label("No rain expected", systemImage: "shield.lefthalf.fill")
           .foregroundColor(.secondary)
           .padding()
       }
       else {
-        ZStack {
-          GeometryReader { geometry in
-            ScrollView(.horizontal) {
-              VStack {
-                Text("...")
-                Spacer()
-                HStack(alignment: .bottom, spacing: 1) {
-                  ForEach(values.indices) { index in
-                    ZStack {
-                      VStack {
-                        if index == selectedIndex {
-                          Image(systemName: "arrow.down")
-                            .foregroundColor(.blue)
-                            .font(.subheadline)
-                        }
-                        
-                        if values.indices.contains(index),
-                           let value = values[index]?.value {
-                          Rectangle()
-                            .fill(Color.white)
-                            //.cornerRadius(25, corners: [.topLeft, .topRight])
-                            .cornerRadius(25)
-                            .frame(
-                              width: 5,
-                              height: ruleOfThree(
-                                base: maxIntensity.subjectiveScale,
-                                extreme: Double(geometry.size.height),
-                                given: value
-                              )
-                            )
-                        } else {
-                          Rectangle().fill(Color.red).frame(height: 0)
-                        }
-                      }
-                    }
-                  }
-                  .drawingGroup()
-                }
+        GeometryReader { geometry in
+          let columnWidth = geometry.size.width / CGFloat(data.count)
+          
+          HStack(spacing: 0) {
+            ForEach(data, id: \.date) { data in
+              let components = Calendar.current.dateComponents([.hour], from: (data.date))
+              if components.hour == 0 {
+                Divider().frame(width: columnWidth)
+              }
+              else {
+                Divider().frame(width: columnWidth, height: 0)
               }
             }
-            // .background(
-            //   LightChartView(
-            //     data: precipitationData.map(\.value),
-            //     type: .curved,
-            //     visualType: .filled(color: Color(.white), lineWidth: 2)
-            //   )
-            //   .frame(
-            //     height: ruleOfThree(
-            //       base: maxIntensity.subjectiveScale,
-            //       extreme: Double(geometry.size.height),
-            //       given: precipitationData.max()!.value
-            //     )
-            //   )
-            // )
-            
-            
-            
-            RainIntensityGridView(
-              intensities: intensities,
-              scale: scale,
-              timestamps: []
-            )
-            
           }
-          if values.indices.contains(selectedIndex),
-             let measurement = values[selectedIndex] {
-            Text(precipitationFormatter.string(from: measurement))
-              .font(.largeTitle)
-          } else {
-            Text("--")
-              .font(.largeTitle)
+          .frame(height: geometry.size.height)
+          
+          VStack {
+            Spacer()
+            HStack(alignment: .bottom, spacing: 0) {
+              ForEach(data.indices) { index in
+                // VStack {
+                  
+                  // if index == selectedIndex {
+                  //   Image(systemName: "arrow.down")
+                  //     .foregroundColor(.secondary)
+                  // }
+                  
+                  if data.indices.contains(index),
+                     let value = data[index].measurement?.value {
+                    Rectangle()
+                      .fill(Color.purple)
+                      .frame(
+                        width: columnWidth,
+                        height: ruleOfThree(
+                          base: maxIntensity.subjectiveScale,
+                          extreme: Double(geometry.size.height),
+                          given: value
+                        )
+                      )
+                  }
+                  else {
+                    Circle()
+                      .fill(Color.red)
+                      .frame(
+                        width: columnWidth,
+                        height: 0
+                      )
+                  }
+                  
+               // }
+              }
+            }
           }
-        }
+          
+          RainIntensityGridView(
+            intensities: intensities,
+            scale: scale,
+            timestamps: []
+          )
+          
+        }.drawingGroup()
       }
     }
   }
