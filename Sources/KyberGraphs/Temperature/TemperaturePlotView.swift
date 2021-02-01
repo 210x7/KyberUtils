@@ -55,11 +55,11 @@ struct TemperaturePlotView: View {
         VStack(alignment: .leading, spacing: 0) {
           //MARK: Over 0
           HStack(alignment: .bottom, spacing: 0) {
-            ForEach(data.indices) { index in
-              if data.indices.contains(index), let measurement = data[index].measurement {
+            ForEach(data, id: \.date) { data in
+              if let measurement = data.measurement {
                 if measurement.value > 0 {
                   Rectangle()
-                    .fill(color(for: index))
+                    .fill(Color.pink)
                     .frame(
                       width: columnWidth,
                       height: CGFloat(measurement.value / max.value) * geometry.size.height/2
@@ -75,11 +75,11 @@ struct TemperaturePlotView: View {
           }
           //MARK: Below 0          
           HStack(alignment: .top, spacing: 0) {
-            ForEach(data.indices) { index in
-              if data.indices.contains(index), let measurement = data[index].measurement {
+            ForEach(data, id: \.date) { data in
+              if let measurement = data.measurement {
                 if measurement.value <= 0 {
                   Rectangle()
-                    .fill(color(for: index)).colorInvert()
+                    .fill(Color.pink).colorInvert()
                     .frame(
                       width: columnWidth,
                       height: -CGFloat(measurement.value / -min.value) * geometry.size.height/2

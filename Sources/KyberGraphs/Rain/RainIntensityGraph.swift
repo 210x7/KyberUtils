@@ -73,7 +73,7 @@ public struct RainIntensityGraph: View {
           VStack {
             Spacer()
             HStack(alignment: .bottom, spacing: 0) {
-              ForEach(data.indices) { index in
+              ForEach(data, id: \.date) { data in
                 // VStack {
                   
                   // if index == selectedIndex {
@@ -81,8 +81,7 @@ public struct RainIntensityGraph: View {
                   //     .foregroundColor(.secondary)
                   // }
                   
-                  if data.indices.contains(index),
-                     let value = data[index].measurement?.value {
+                  if let measurement = data.measurement {
                     Rectangle()
                       .fill(Color.purple)
                       .frame(
@@ -90,7 +89,7 @@ public struct RainIntensityGraph: View {
                         height: ruleOfThree(
                           base: maxIntensity.subjectiveScale,
                           extreme: Double(geometry.size.height),
-                          given: value
+                          given: measurement.value
                         )
                       )
                   }
