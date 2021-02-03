@@ -32,6 +32,7 @@ public extension MapSnapshotClient {
       #endif
       mapSnapshotOptions.size = size
       mapSnapshotOptions.showsBuildings = false
+      mapSnapshotOptions.mapType = MKMapType.hybridFlyover
       //TODO: complete POI filter
       // mapSnapshotOptions.pointOfInterestFilter = MKPointOfInterestFilter(excluding: [.airport])
       

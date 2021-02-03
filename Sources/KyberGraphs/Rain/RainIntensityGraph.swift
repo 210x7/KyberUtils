@@ -45,11 +45,14 @@ public struct RainIntensityGraph: View {
     ZStack(alignment: Alignment(horizontal: .center, vertical: .bottom)) {
       if data.isEmpty {
         Label("No data", systemImage: "xmark.shield.fill")
+          .fixedSize()
           .foregroundColor(.secondary)
           .padding()
+        
       }
       else if data.compactMap({ $0.measurement?.value }).reduce(0, +) == 0 {
         Label("No rain expected", systemImage: "shield.lefthalf.fill")
+          .fixedSize()
           .foregroundColor(.secondary)
           .padding()
       }
@@ -75,34 +78,34 @@ public struct RainIntensityGraph: View {
             HStack(alignment: .bottom, spacing: 0) {
               ForEach(data, id: \.date) { data in
                 // VStack {
-                  
-                  // if index == selectedIndex {
-                  //   Image(systemName: "arrow.down")
-                  //     .foregroundColor(.secondary)
-                  // }
-                  
-                  if let measurement = data.measurement {
-                    Rectangle()
-                      .fill(Color.purple)
-                      .frame(
-                        width: columnWidth,
-                        height: ruleOfThree(
-                          base: maxIntensity.subjectiveScale,
-                          extreme: Double(geometry.size.height),
-                          given: measurement.value
-                        )
+                
+                // if index == selectedIndex {
+                //   Image(systemName: "arrow.down")
+                //     .foregroundColor(.secondary)
+                // }
+                
+                if let measurement = data.measurement {
+                  Rectangle()
+                    .fill(Color.purple)
+                    .frame(
+                      width: columnWidth,
+                      height: ruleOfThree(
+                        base: maxIntensity.subjectiveScale,
+                        extreme: Double(geometry.size.height),
+                        given: measurement.value
                       )
-                  }
-                  else {
-                    Circle()
-                      .fill(Color.red)
-                      .frame(
-                        width: columnWidth,
-                        height: 0
-                      )
-                  }
-                  
-               // }
+                    )
+                }
+                else {
+                  Circle()
+                    .fill(Color.red)
+                    .frame(
+                      width: columnWidth,
+                      height: 0
+                    )
+                }
+                
+                // }
               }
             }
           }
