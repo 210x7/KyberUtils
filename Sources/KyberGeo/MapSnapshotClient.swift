@@ -15,7 +15,7 @@ import ComposableArchitecture
 import MapKit
 
 public struct MapSnapshotClient {
-  public var makeSnapshot: (String, CoordinateRegion, CGSize) -> Effect<MapSnapshot, Failure>
+  public var makeSnapshot: (String, CoordinateRegion, CGSize) -> Effect<MapSnapshotImage, Failure>
   
   public enum Failure: Error {
     case mapSnapshotterError
@@ -23,7 +23,7 @@ public struct MapSnapshotClient {
 }
 
 public extension MapSnapshotClient {
-  static let live = MapSnapshotClient { (id, region, size) -> Effect<MapSnapshot, Failure> in
+  static let live = MapSnapshotClient { (id, region, size) -> Effect<MapSnapshotImage, Failure> in
     .future { callback in
       let mapSnapshotOptions = MKMapSnapshotter.Options()
       mapSnapshotOptions.region = region.asMKCoordinateRegion
@@ -39,7 +39,7 @@ public extension MapSnapshotClient {
       let snapShotter = MKMapSnapshotter(options: mapSnapshotOptions)
       snapShotter.start { (snap, error) in
         guard let data = snap?.image.tiffRepresentation else { return callback(.failure(.mapSnapshotterError)) }
-        callback(.success(MapSnapshot(id: id, data: data)))
+        callback(.success(MapSnapshotImage(data: data)))
       }
     }
   }
