@@ -12,6 +12,7 @@ struct TemperaturePlotView: View {
   let data: [TemperatureData]
   let selectedIndex: Int
   
+  //TODO: check if this properties are redundant with the `DWDState` declared ones
   var min: Measurement<UnitTemperature> {
     guard let min = data.compactMap({ $0.measurement }).min() else {
       return Measurement<UnitTemperature>(value: 0, unit: .celsius)
@@ -28,31 +29,13 @@ struct TemperaturePlotView: View {
     return max
   }
   
-  
   var body: some View {
     GeometryReader { geometry in
       let columnWidth = geometry.size.width / CGFloat(data.count)
       ZStack {
         VStack(alignment: .leading, spacing: 0) {
-          Text("max: " + temperatureFormatter.string(from: max)).font(.caption)
-          // Divider()
-          HStack(spacing: 0) {
-            ForEach(data, id: \.date) { data in
-              let components = Calendar.current.dateComponents([.hour], from: (data.date))
-              if components.hour == 0 {
-                Divider().frame(width: columnWidth)
-              }
-              else {
-                Divider().frame(width: columnWidth, height: 0)
-              }
-            }
-          }
-          .frame(height: geometry.size.height)
-          // Divider()
-          Text("min: " + temperatureFormatter.string(from: min)).font(.caption)
-        }
-        
-        VStack(alignment: .leading, spacing: 0) {
+          Spacer()
+
           //MARK: Over 0
           HStack(alignment: .bottom, spacing: 0) {
             ForEach(data, id: \.date) { data in
@@ -69,7 +52,7 @@ struct TemperaturePlotView: View {
                 }
                 
               } else {
-                Circle().fill(Color.red).frame(width: columnWidth, height: 5)
+                Circle().frame(width: columnWidth, height: columnWidth)
               }
             }
           }
@@ -88,11 +71,31 @@ struct TemperaturePlotView: View {
                   Rectangle().frame(width: columnWidth, height: 0)
                 }
               } else {
-                Circle().fill(Color.red).frame(width: columnWidth, height: 5)
+                Circle().frame(width: columnWidth, height: 0)
               }
             }
           }
           
+        }
+        .padding([.top, .bottom])
+        
+        VStack(alignment: .leading, spacing: 0) {
+          Text("max: " + temperatureFormatter.string(from: max)).font(.caption)
+          
+          HStack(spacing: 0) {
+            ForEach(data, id: \.date) { data in
+              let components = Calendar.current.dateComponents([.hour], from: (data.date))
+              if components.hour == 0 {
+                Divider().frame(width: columnWidth)
+              }
+              else {
+                Divider().frame(width: columnWidth, height: 0)
+              }
+            }
+          }
+          .frame(height: geometry.size.height)
+
+          Text("min: " + temperatureFormatter.string(from: min)).font(.caption)
         }
       }
       .drawingGroup()

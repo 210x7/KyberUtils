@@ -8,16 +8,16 @@
 import SwiftUI
 //import KyberCommon
 
-public typealias RainData = (date: Date, measurement: Measurement<UnitLength>?)
+public typealias PrecipitationData = (date: Date, measurement: Measurement<UnitLength>?)
 
 
 public struct RainIntensityGraph: View {
-  public init(data: [RainData], selectedIndex: Int) {
+  public init(data: [PrecipitationData], selectedIndex: Int) {
     self.data = data
     self.selectedIndex = selectedIndex
   }
   
-  let data: [RainData]
+  let data: [PrecipitationData]
   let selectedIndex: Int
   
   @Environment(\.colorScheme) var colorScheme

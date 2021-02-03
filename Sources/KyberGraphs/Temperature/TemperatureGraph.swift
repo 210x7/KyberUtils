@@ -18,16 +18,14 @@ import SwiftUI
 public typealias TemperatureData = (date: Date, measurement: Measurement<UnitTemperature>?)
 
 public struct TemperatureGraph: View {
+  let data: [TemperatureData]
+  let selectedIndex: Int
+
   public init(data: [TemperatureData], selectedIndex: Int) {
     self.data = data
     self.selectedIndex = selectedIndex
   }
-  
-  let data: [TemperatureData]
-  let selectedIndex: Int
-  
-  @Environment(\.colorScheme) var colorScheme
-  
+    
   public var body: some View {
     ZStack {
       if data.isEmpty {
@@ -40,58 +38,8 @@ public struct TemperatureGraph: View {
           data: data,
           selectedIndex: selectedIndex
         )
-        
-        //        if values.indices.contains(selectedIndex),
-        //           let measurement = values[selectedIndex] {
-        //          Text(temperatureFormatter.string(from: measurement))
-        //            .font(.largeTitle)
-        //        } else {
-        //          Text("--")
-        //            .font(.largeTitle)
-        //        }
-        
       }
-    }.padding([.top, .bottom])
-    
+    }
+    .padding([.top, .bottom])
   }
 }
-
-// VStack {
-//   if values.indices.contains(index),
-//      let measurement = values[index] {
-//
-//     if index == selectedIndex {
-//       VStack {
-//         Text(temperatureFormatter.string(from: measurement)).frame(width: 100)
-//         Image(systemName: "arrow.down")
-//           .foregroundColor(.blue)
-//           .font(.subheadline)
-//       }
-//     }
-//     Rectangle()
-//       .foregroundColor(.clear)
-//       .frame(
-//         height: ruleOfThree(
-//           base: 100,
-//           extreme: Double(geometry.size.height),
-//           given: measurement.value
-//         )
-//       )
-//   } else {
-//     Rectangle().fill(Color.red).frame(height: 1)
-//   }
-// }
-
-
-
-
-//                Rectangle()
-//                  .fill(color(for: index))
-//                  .frame(
-//                    width: 5,
-//                    height: ruleOfThree(
-//                      base: 100, //TODO: currently only localized for metric system
-//                      extreme: Double(geometry.size.height),
-//                      given: measurement.value
-//                    )
-//                  )
