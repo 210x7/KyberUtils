@@ -25,12 +25,12 @@ public struct SearchBarView: View {
           } else {
             Image(systemName: "magnifyingglass")
               .font(.callout)
-              //FIXME: conditional #if os(macOS) style
-              //.foregroundColor(Color(.secondaryLabel))
+            //FIXME: conditional #if os(macOS) style
+            //.foregroundColor(Color(.secondaryLabel))
           }
         }
         .frame(width: 22, height: 22)
-
+        
         TextField(
           "Search for a place or address",
           text: viewStore.binding(
@@ -41,7 +41,7 @@ public struct SearchBarView: View {
           onCommit: { viewStore.send(.onCommit) }
         )
         .textFieldStyle(RoundedBorderTextFieldStyle())
-//        .font(.headline)
+        // .font(.headline)
         .disableAutocorrection(true)
         //FIXME: conditional #if os(macOS) style
         //.keyboardType(.alphabet)

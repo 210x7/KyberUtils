@@ -21,14 +21,14 @@ import SwiftUI
  https://en.wikipedia.org/wiki/Rain#Intensity
  */
 
-public enum RainIntensity: CaseIterable {
+public enum RainIntensityType: CaseIterable {
   case light
   case moderate
   case heavy
   case violent
 }
 
-public extension RainIntensity {
+public extension RainIntensityType {
   //TODO: implement non metric systems
   var amount: Range<Double> {
     switch self {
@@ -98,7 +98,7 @@ public extension RainIntensity {
   }
 }
 
-extension RainIntensity: CustomStringConvertible {
+extension RainIntensityType: CustomStringConvertible {
   public var description: String {
     switch self {
     case .light:

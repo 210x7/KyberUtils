@@ -85,6 +85,14 @@ public let windFormatter: MeasurementFormatter = {
   return formatter
 }()
 
+public let speedFormatter: MeasurementFormatter = {
+  let formatter = MeasurementFormatter()
+  formatter.unitStyle = .short
+  formatter.unitOptions = .naturalScale
+  formatter.numberFormatter.maximumFractionDigits = 0
+  return formatter
+}()
+
 #if os(macOS)
 public func colorFrom(precipitation: Double) -> NSColor {
   guard precipitation > 0 else { return .quaternaryLabelColor }

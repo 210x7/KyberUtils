@@ -31,7 +31,7 @@ let package = Package(
   dependencies: [
     // Dependencies declare other packages that this package depends on.
     // .package(url: /* package url */, from: "1.0.0"),
-    .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "0.10.0"),
+    .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "0.11.0"),
     .package(url: "https://github.com/pointfreeco/composable-core-location", from: "0.1.0")
     //.package(url: "https://github.com/OAuthSwift/OAuthSwift.git", from: "2.1.0"),
     //.package(url: "https://github.com/pichukov/LightChart", from: "1.0.0"),
@@ -41,7 +41,10 @@ let package = Package(
     // Targets can depend on other targets in this package, and on products in packages this package depends on.
     .target(
       name: "KyberGeo",
-      dependencies: []
+      dependencies: [
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+        .product(name: "ComposableCoreLocation", package: "composable-core-location"),
+      ]
     ),
     .testTarget(
       name: "KyberGeoTests",
@@ -50,7 +53,7 @@ let package = Package(
     .target(
       name: "KyberGraphs",
       dependencies: [
-        //.product(name: "LightChart", package: "LightChart")
+        .target(name:  "KyberCommon")
       ]),
     .testTarget(
       name: "KyberGraphsTests",
@@ -73,12 +76,10 @@ let package = Package(
     ),
     .target(
       name: "KyberCommon",
-      dependencies: [
-        //.product(name: "LightChart", package: "LightChart")
-      ]),
+      dependencies: ["KyberGeo"]),
     .testTarget(
       name: "KyberCommonTests",
-      dependencies: []
+      dependencies: ["KyberCommon"]
     ),
   ]
 )

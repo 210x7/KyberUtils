@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct RainIntensityGridView: View {
-  let intensities: [RainIntensity]
+  let intensities: [RainIntensityType]
   let scale: Double
   let timestamps: [Date]
   
@@ -55,7 +55,7 @@ struct RainIntensityGridView: View {
 
 struct GridView: View {
   let height: CGFloat
-  let intensities: [RainIntensity]
+  let intensities: [RainIntensityType]
   let scale: Double
   
   var body: some View {
@@ -76,7 +76,7 @@ struct GridView: View {
 
 struct LegendView: View {
   let height: CGFloat
-  let intensities: [RainIntensity]
+  let intensities: [RainIntensityType]
   let scale: Double
   
   var body: some View {
@@ -103,7 +103,7 @@ struct LegendView: View {
 }
 
 struct RainRateIntensityGridView_Previews: PreviewProvider {
-  static let intensities: [RainIntensity] = [.light, .moderate, .heavy, .violent]
+  static let intensities: [RainIntensityType] = [.light, .moderate, .heavy, .violent]
   static let timestamps: [Date] = [Date()]
   
   static var previews: some View {
