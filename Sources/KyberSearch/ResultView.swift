@@ -11,12 +11,12 @@ import MapKit
 import SwiftUI
 
 public struct ResultView: View {
-  public init(store: Store<KyberSearch, KyberSearchAction>, placemark: CLPlacemark) {
+  public init(store: Store<SearchState, SearchAction>, placemark: CLPlacemark) {
     self.store = store
     self.placemark = placemark
   }
   
-  let store: Store<KyberSearch, KyberSearchAction>
+  let store: Store<SearchState, SearchAction>
   let placemark: CLPlacemark
   @Environment(\.colorScheme) var colorScheme
   @Environment(\.resultPosition) var resultPosition

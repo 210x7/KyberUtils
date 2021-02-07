@@ -9,11 +9,11 @@ import ComposableArchitecture
 import SwiftUI
 
 public struct PlaceSearchView: View {
-  public init(store: Store<KyberSearch, KyberSearchAction>) {
+  public init(store: Store<SearchState, SearchAction>) {
     self.store = store
   }
   
-  let store: Store<KyberSearch, KyberSearchAction>
+  let store: Store<SearchState, SearchAction>
   @Environment(\.resultPosition) var resultPosition
   
   public var body: some View {
@@ -40,11 +40,11 @@ public struct PlaceSearchView: View {
       }
       //FIXME: conditional #if os(macOS) style
       //.background(Rectangle().fill(Color(.secondarySystemBackground)))
-      .clipShape(RoundedRectangle(cornerRadius: 8))
+      //.clipShape(RoundedRectangle(cornerRadius: 8))
       //FIXME: conditional #if os(macOS) style
       // .overlay(RoundedRectangle(cornerRadius: 7).stroke(Color(.systemBackground)).padding(1))
       // .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color(.secondarySystemFill)))
-      .animation(.easeOut(duration: 0.2))
+      //.animation(.easeOut(duration: 0.2))
     }
   }
 }
