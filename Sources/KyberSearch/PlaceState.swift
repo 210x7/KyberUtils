@@ -1,5 +1,5 @@
 //
-//  CurrentLocation.swift
+//  PlaceState.swift
 //  
 //
 //  Created by Cristian Díaz on 31.08.20.
@@ -9,23 +9,23 @@ import ComposableArchitecture
 import ComposableCoreLocation
 import Foundation
 
-public struct CurrentLocation: Equatable {
+public struct PlaceState: Equatable {
   public init(place: CLPlacemark? = nil, geocoder: GeocoderState = GeocoderState()) {
-    self.place = place
+    self.placemark = place
     self.geocoder = geocoder
   }
   
-  public var place: CLPlacemark?
+  public var placemark: CLPlacemark?
   var geocoder: GeocoderState
 }
 
-public enum CurrentLocationAction: Equatable {
+public enum PlaceAction: Equatable {
   case geocoder(GeocoderAction)
   case placeFrom(location: Location)
   case didFound
 }
 
-public struct CurrentLocationEnvironment {
+public struct PlaceEnvironment {
   public init(geocoderClient: GeocoderClient, mainQueue: AnySchedulerOf<DispatchQueue>) {
     self.geocoderClient = geocoderClient
     self.mainQueue = mainQueue
@@ -35,10 +35,10 @@ public struct CurrentLocationEnvironment {
   var mainQueue: AnySchedulerOf<DispatchQueue>
 }
 
-public let currentLocationReducer = Reducer<CurrentLocation, CurrentLocationAction, CurrentLocationEnvironment>.combine(
+public let placeReducer = Reducer<PlaceState, PlaceAction, PlaceEnvironment>.combine(
   geocoderReducer.pullback(
-    state: \CurrentLocation.geocoder,
-    action: /CurrentLocationAction.geocoder,
+    state: \PlaceState.geocoder,
+    action: /PlaceAction.geocoder,
     environment: {
       GeocoderEnvironment(
         geocoderClient: $0.geocoderClient,
@@ -48,7 +48,7 @@ public let currentLocationReducer = Reducer<CurrentLocation, CurrentLocationActi
   ),
   Reducer { (state, action, environment) in
     switch action {
-
+    
     case let .placeFrom(location: location):
       return Effect(value: .geocoder(.addressFromLocation(location)))
       
@@ -56,7 +56,7 @@ public let currentLocationReducer = Reducer<CurrentLocation, CurrentLocationActi
       return .none
       
     case let .geocoder(.geocodingResponse(.success(result))):
-      state.place = result.first
+      state.placemark = result.first
       return Effect(value: .didFound)
       
     case .geocoder(_):

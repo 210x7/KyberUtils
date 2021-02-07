@@ -33,7 +33,7 @@ public enum SearchAction: Equatable {
   case didSelect(CLPlacemark)
 }
 
-public struct KyberSearchEnvironment {
+public struct SearchEnvironment {
   public init(geocoderClient: GeocoderClient, mainQueue: AnySchedulerOf<DispatchQueue>) {
     self.geocoderClient = geocoderClient
     self.mainQueue = mainQueue
@@ -43,7 +43,7 @@ public struct KyberSearchEnvironment {
   var mainQueue: AnySchedulerOf<DispatchQueue>
 }
 
-public let kyberSearchReducer = Reducer<SearchState, SearchAction, KyberSearchEnvironment>.combine(
+public let searchReducer = Reducer<SearchState, SearchAction, SearchEnvironment>.combine(
   geocoderReducer.pullback(
     state: \.geocoder,
     action: /SearchAction.geocoder,
