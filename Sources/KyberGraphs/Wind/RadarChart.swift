@@ -39,6 +39,7 @@ public struct RadarChart: View {
       Text("S")
     }
     .font(.caption)
+    .drawingGroup()
   }
 }
 

@@ -19,6 +19,7 @@ public struct SearchBarView: View {
     WithViewStore(store) { viewStore in
       #if os(macOS)
       SearchFieldRepresentable(viewStore: viewStore)
+        .help("Search for a place or address")
       #else
       HStack {
         ZStack {
@@ -74,7 +75,7 @@ struct SearchFieldRepresentable: NSViewRepresentable {
   
   public func makeNSView(context: Context) -> NSSearchField {
     let nsView = NSSearchField()
-    nsView.placeholderString = "Search for a place or address"
+    nsView.placeholderString = "Search"
     nsView.delegate = context.coordinator
     nsView.target = context.coordinator
     nsView.action = #selector(context.coordinator.performAction(_:))

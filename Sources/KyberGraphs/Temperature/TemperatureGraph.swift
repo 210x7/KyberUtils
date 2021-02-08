@@ -41,5 +41,6 @@ public struct TemperatureGraph: View {
       }
     }
     .padding([.top, .bottom])
+    .drawingGroup()
   }
 }
