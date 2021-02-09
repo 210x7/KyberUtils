@@ -72,7 +72,7 @@ public let precipitationFormatter: MeasurementFormatter = {
   let formatter = MeasurementFormatter()
   formatter.unitStyle = .short
   formatter.unitOptions = .providedUnit
-  formatter.numberFormatter.maximumFractionDigits = 0
+  formatter.numberFormatter.maximumFractionDigits = 1
   return formatter
 }()
 

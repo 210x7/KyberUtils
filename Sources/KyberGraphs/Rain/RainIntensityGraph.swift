@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-//import KyberCommon
+import KyberCommon
 
 public typealias PrecipitationData = (date: Date, measurement: Measurement<UnitLength>?)
 
@@ -22,14 +22,15 @@ public struct RainIntensityGraph: View {
   
   @Environment(\.colorScheme) var colorScheme
   
+  var maxMeasurement: Measurement<UnitLength> {
+    data.compactMap(\.measurement).max() ?? .init(value: 0, unit: .millimeters)
+  }
+  
   var intensities: [RainIntensityType] {
-    guard
-      let max = data.compactMap({ $0.measurement }).max(),
-      max.value > 0.0
-    else { fatalError() }
+    guard maxMeasurement.value > 0.0 else { fatalError() }
     return RainIntensityType.allCases
       .filter {
-        $0.amount.lowerBound <= max.value + RainIntensityType.moderate.amount.lowerBound
+        $0.amount.lowerBound <= maxMeasurement.value
       }
   }
   
@@ -75,6 +76,9 @@ public struct RainIntensityGraph: View {
           
           VStack {
             Spacer()
+            Group {
+              Text("max: ") + Text(maxMeasurement, formatter: precipitationFormatter)
+            }.font(.caption)
             HStack(alignment: .bottom, spacing: 0) {
               ForEach(data, id: \.date) { data in
                 // VStack {

@@ -29,6 +29,10 @@ struct TemperaturePlotView: View {
     return max
   }
   
+  var differenceMinMax: Double {
+    -min.value + max.value
+  }
+  
   var body: some View {
     GeometryReader { geometry in
       let columnWidth = geometry.size.width / CGFloat(data.count)
@@ -45,7 +49,11 @@ struct TemperaturePlotView: View {
                     .fill(Color.pink)
                     .frame(
                       width: columnWidth,
-                      height: CGFloat(measurement.value / max.value) * geometry.size.height/2
+                      height: ruleOfThree(
+                        base: differenceMinMax,
+                        extreme: Double(geometry.size.height),
+                        given: measurement.value
+                      )
                     )
                 } else {
                   Rectangle().frame(width: columnWidth, height:0)
@@ -65,7 +73,11 @@ struct TemperaturePlotView: View {
                     .fill(Color.pink).colorInvert()
                     .frame(
                       width: columnWidth,
-                      height: -CGFloat(measurement.value / -min.value) * geometry.size.height/2
+                      height: ruleOfThree(
+                        base: differenceMinMax,
+                        extreme: Double(geometry.size.height),
+                        given: -measurement.value
+                      )
                     )
                 } else {
                   Rectangle().frame(width: columnWidth, height: 0)
