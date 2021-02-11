@@ -24,7 +24,7 @@ public struct WeatherValueView<T: Unit>: View {
         Text(label)
           .font(.system(size: 14 * size, weight: .semibold, design: .rounded))
           .foregroundColor(.secondary)
-        Text(numberFormatter.string(for: measurement.value) ?? "--")
+        Text(Format.number.string(for: measurement.value) ?? "--")
           .font(.system(size: 24 * size, weight: .bold, design: .rounded))
           + Text(" \(measurement.unit.symbol)")
           .font(.system(size: 14 * size, weight: .semibold, design: .rounded))

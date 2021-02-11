@@ -92,7 +92,7 @@ struct TemperaturePlotView: View {
         .padding([.top, .bottom])
         
         VStack(alignment: .leading, spacing: 0) {
-          Text("max: " + temperatureFormatter.string(from: max)).font(.caption)
+          Text("max: " + Format.temperature.string(from: max)).font(.caption)
           
           HStack(spacing: 0) {
             ForEach(data, id: \.date) { data in
@@ -107,7 +107,7 @@ struct TemperaturePlotView: View {
           }
           .frame(height: geometry.size.height)
 
-          Text("min: " + temperatureFormatter.string(from: min)).font(.caption)
+          Text("min: " + Format.temperature.string(from: min)).font(.caption)
         }
       }
       .drawingGroup()
