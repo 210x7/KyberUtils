@@ -3,7 +3,6 @@
 //  Utils
 //
 //  Created by Cristian Díaz (work) on 22.06.20.
-//  Copyright © 2020 MeteoGroup. All rights reserved.
 //
 
 import Foundation
