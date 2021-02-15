@@ -77,7 +77,7 @@ public struct RainIntensityGraph: View {
           VStack {
             Spacer()
             Group {
-              Text("max: ") + Text(maxMeasurement, formatter: Format.precipitation)
+              Text("max: ") + Text(maxMeasurement, formatter: Formatters.shared.precipitation)
             }.font(.caption)
             HStack(alignment: .bottom, spacing: 0) {
               ForEach(data, id: \.date) { data in

@@ -22,6 +22,7 @@ public struct PlaceSearchView: View {
         switch resultPosition {
         case .top:
           SearchBarView(store: store)
+          
           if let placemark = viewStore.result {
             Divider()
             ResultView(store: store, placemark: placemark)

@@ -8,11 +8,13 @@
 import Foundation
 
 
-public class Format {
+public class Formatters {
  
+  public static let shared = Formatters()
+  
   public static let placeholder = "--"
   
-  public static let ISO8601: ISO8601DateFormatter = {
+  public let ISO8601: ISO8601DateFormatter = {
     let formatter = ISO8601DateFormatter()
     formatter.timeZone = TimeZone.current
     formatter.formatOptions = [
@@ -28,28 +30,28 @@ public class Format {
     return formatter
   }()
   
-  public static let date: DateFormatter = {
+  public let date: DateFormatter = {
     let formatter = DateFormatter()
     formatter.dateStyle = .short
     formatter.dateFormat = "HH:mm"
     return formatter
   }()
 
-  public static let number: NumberFormatter = {
+  public let number: NumberFormatter = {
     let formatter = NumberFormatter()
     formatter.maximumFractionDigits = 1
     formatter.roundingMode = .up
     return formatter
   }()
 
-  public static let measurement: MeasurementFormatter = {
+  public let measurement: MeasurementFormatter = {
     let formatter = MeasurementFormatter()
     formatter.unitStyle = .short
     formatter.numberFormatter.maximumFractionDigits = 1
     return formatter
   }()
 
-  public static let temperature: MeasurementFormatter = {
+  public let temperature: MeasurementFormatter = {
     let formatter = MeasurementFormatter()
     formatter.unitStyle = .short
     formatter.numberFormatter.roundingMode = .halfUp
@@ -57,14 +59,14 @@ public class Format {
     return formatter
   }()
 
-  public static let distance: MeasurementFormatter = {
+  public let distance: MeasurementFormatter = {
     let formatter = MeasurementFormatter()
     formatter.unitOptions = .naturalScale
     formatter.numberFormatter.maximumFractionDigits = 0
     return formatter
   }()
 
-  public static let precipitation: MeasurementFormatter = {
+  public let precipitation: MeasurementFormatter = {
     let formatter = MeasurementFormatter()
     formatter.unitStyle = .short
     formatter.unitOptions = .providedUnit
@@ -72,7 +74,7 @@ public class Format {
     return formatter
   }()
 
-  public static let direction: MeasurementFormatter = {
+  public let direction: MeasurementFormatter = {
     let formatter = MeasurementFormatter()
     formatter.unitStyle = .short
     formatter.unitOptions = .providedUnit
@@ -80,11 +82,17 @@ public class Format {
     return formatter
   }()
 
-  public static let speed: MeasurementFormatter = {
+  public let speed: MeasurementFormatter = {
     let formatter = MeasurementFormatter()
     formatter.unitStyle = .short
     formatter.unitOptions = .naturalScale
     formatter.numberFormatter.maximumFractionDigits = 0
+    return formatter
+  }()
+  
+  public let weekday: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "EEEEE"
     return formatter
   }()
 }
