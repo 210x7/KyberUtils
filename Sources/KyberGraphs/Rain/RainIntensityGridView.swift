@@ -22,32 +22,13 @@ struct RainIntensityGridView: View {
             intensities: intensities,
             scale: scale
           )
+          
           LegendView(
             height: geometry.size.height,
             intensities: intensities,
             scale: scale
           )
         }
-        
-        // if !intensities.isEmpty {
-        //   VStack {
-        //     HStack(alignment: .bottom, spacing: 0) {
-        //       ForEach(timestamps, id: \.self) { timestamp in
-        //         if timestamp == timestamps.first(where: { $0 >= Date() })  {
-        //           Image(systemName: "arrow.up").foregroundColor(.accentColor)
-        //         } else {
-        //           Spacer()
-        //         }
-        //       }
-        //     }
-        //   }
-        //   if let start = timestamps.min(),
-        //      let end = timestamps.max() {
-        //     Text(start...end)
-        //       .font(Font.system(.caption2, design: .rounded))
-        //       .foregroundColor(.secondary)
-        //   }
-        // }
       }
     }
   }
@@ -64,13 +45,8 @@ struct GridView: View {
         Spacer()
           .frame(height: height * CGFloat(intensity.subjectiveScale / scale))
           .frame(minHeight: 0)
-        Divider()
       }
     }
-    // .background(
-    //   GridPattern(verticalLines: timestamps.count + 1)
-    //     .stroke(Color(.secondarySystemBackground), style: .init(lineWidth: 0.7))
-    // )
   }
 }
 

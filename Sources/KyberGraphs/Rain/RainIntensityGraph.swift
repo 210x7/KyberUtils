@@ -12,34 +12,31 @@ public typealias PrecipitationData = (date: Date, measurement: Measurement<UnitL
 
 
 public struct RainIntensityGraph: View {
+  
+  private let data: [PrecipitationData]
+  private let selectedIndex: Int
+  
+  @Environment(\.colorScheme) private var colorScheme
+  
+  private var maxPrecipitation: Measurement<UnitLength>?
+  private var intensities: [RainIntensityType] = []
+  private var maxIntensity: RainIntensityType
+  private var scale: Double
+  
   public init(data: [PrecipitationData], selectedIndex: Int) {
     self.data = data
     self.selectedIndex = selectedIndex
-  }
-  
-  let data: [PrecipitationData]
-  let selectedIndex: Int
-  
-  @Environment(\.colorScheme) var colorScheme
-  
-  var maxMeasurement: Measurement<UnitLength> {
-    data.compactMap(\.measurement).max() ?? .init(value: 0, unit: .millimeters)
-  }
-  
-  var intensities: [RainIntensityType] {
-    guard maxMeasurement.value > 0.0 else { fatalError() }
-    return RainIntensityType.allCases
-      .filter {
-        $0.amount.lowerBound <= maxMeasurement.value
-      }
-  }
-  
-  var maxIntensity: RainIntensityType {
-    intensities.last ?? .light
-  }
-  
-  var scale: Double {
-    intensities.map(\.subjectiveScale).reduce(0.0, +)
+    
+    if let maxPrecipitation = data.compactMap(\.measurement).max() {
+      self.maxPrecipitation = maxPrecipitation
+      
+      guard maxPrecipitation.value.sign == .plus else { fatalError("Invalid Negative Rain") }
+      self.intensities = RainIntensityType.allCases
+        .filter { $0.amount.lowerBound <= maxPrecipitation.value }
+    }
+    
+    self.maxIntensity = intensities.last ?? .light
+    self.scale = intensities.map(\.subjectiveScale).reduce(0.0, +)
   }
   
   public var body: some View {
@@ -76,18 +73,15 @@ public struct RainIntensityGraph: View {
           
           VStack {
             Spacer()
-            Group {
-              Text("max: ") + Text(maxMeasurement, formatter: Formatters.shared.precipitation)
-            }.font(.caption)
+            if let max = maxPrecipitation {
+              Group {
+                Text("max: ") + Text(max, formatter: Formatters.shared.precipitation)
+              }
+              .font(.caption)
+              .padding(2).background(Color.controlBackground)
+            }
             HStack(alignment: .bottom, spacing: 0) {
               ForEach(data, id: \.date) { data in
-                // VStack {
-                
-                // if index == selectedIndex {
-                //   Image(systemName: "arrow.down")
-                //     .foregroundColor(.secondary)
-                // }
-                
                 if let measurement = data.measurement {
                   Rectangle()
                     .fill(Color.purple)
@@ -108,8 +102,6 @@ public struct RainIntensityGraph: View {
                       height: 0
                     )
                 }
-                
-                // }
               }
             }
           }
@@ -120,7 +112,8 @@ public struct RainIntensityGraph: View {
             timestamps: []
           )
           
-        }.drawingGroup()
+        }
+        .drawingGroup()
       }
     }
   }
