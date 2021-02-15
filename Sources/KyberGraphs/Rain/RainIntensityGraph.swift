@@ -42,17 +42,20 @@ public struct RainIntensityGraph: View {
   public var body: some View {
     ZStack(alignment: Alignment(horizontal: .center, vertical: .bottom)) {
       if data.isEmpty {
-        Label("No data", systemImage: "xmark.shield.fill")
-          .fixedSize()
-          .foregroundColor(.secondary)
-          .padding()
-        
+        Rectangle()
+          .fill(Color.clear)
+          .overlay(
+            Label("No data", systemImage: "xmark.shield.fill")
+              .foregroundColor(.secondary)
+          )
       }
       else if data.compactMap({ $0.measurement?.value }).reduce(0, +) == 0 {
-        Label("No rain expected", systemImage: "shield.lefthalf.fill")
-          .fixedSize()
-          .foregroundColor(.secondary)
-          .padding()
+        Rectangle()
+          .fill(Color.clear)
+          .overlay(
+            Label("No rain expected", systemImage: "shield.lefthalf.fill")
+              .foregroundColor(.secondary)
+          )
       }
       else {
         GeometryReader { geometry in
