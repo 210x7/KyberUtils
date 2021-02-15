@@ -29,7 +29,7 @@ public struct TimeZoneOffsetView: View {
         )
     }
     else {
-      EmptyView()
+      Spacer()
     }
   }
 }

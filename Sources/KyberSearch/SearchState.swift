@@ -8,7 +8,7 @@
 import ComposableArchitecture
 import ComposableCoreLocation
 
-public struct KyberSearch: Equatable {
+public struct SearchState: Equatable {
   public init(geocoder: GeocoderState = GeocoderState(), query: String = "", result: CLPlacemark? = nil, isCancelVisible: Bool = false, isLoading: Bool = false) {
     self.geocoder = geocoder
     self.query = query
@@ -24,7 +24,7 @@ public struct KyberSearch: Equatable {
   var isLoading = false
 }
 
-public enum KyberSearchAction: Equatable {
+public enum SearchAction: Equatable {
   case geocoder(GeocoderAction)
   case onQueryChanged(String)
   case onEditingChanged(Bool)
@@ -33,7 +33,7 @@ public enum KyberSearchAction: Equatable {
   case didSelect(CLPlacemark)
 }
 
-public struct KyberSearchEnvironment {
+public struct SearchEnvironment {
   public init(geocoderClient: GeocoderClient, mainQueue: AnySchedulerOf<DispatchQueue>) {
     self.geocoderClient = geocoderClient
     self.mainQueue = mainQueue
@@ -43,10 +43,10 @@ public struct KyberSearchEnvironment {
   var mainQueue: AnySchedulerOf<DispatchQueue>
 }
 
-public let kyberSearchReducer = Reducer<KyberSearch, KyberSearchAction, KyberSearchEnvironment>.combine(
+public let searchReducer = Reducer<SearchState, SearchAction, SearchEnvironment>.combine(
   geocoderReducer.pullback(
     state: \.geocoder,
-    action: /KyberSearchAction.geocoder,
+    action: /SearchAction.geocoder,
     environment: {
       GeocoderEnvironment(
         geocoderClient: $0.geocoderClient,
@@ -68,8 +68,7 @@ public let kyberSearchReducer = Reducer<KyberSearch, KyberSearchAction, KyberSea
       state.query = query
       state.isCancelVisible = true
       state.isLoading = true
-      return Effect(value: .geocoder(.locationFromAddress(query)))
-      
+      return Effect(value: .geocoder(.locationFromAddress(query)))        .debounce(id: QueryId(), for: 0.3, scheduler: environment.mainQueue)      
       
     case let .onEditingChanged(changed):
       // guard state.query.isEmpty else {

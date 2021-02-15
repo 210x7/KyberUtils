@@ -6,55 +6,56 @@
 //
 
 import SwiftUI
-//import KyberCommon
+import KyberCommon
 
 public typealias PrecipitationData = (date: Date, measurement: Measurement<UnitLength>?)
 
 
 public struct RainIntensityGraph: View {
+  
+  private let data: [PrecipitationData]
+  private let selectedIndex: Int
+  
+  @Environment(\.colorScheme) private var colorScheme
+  
+  private var maxPrecipitation: Measurement<UnitLength>?
+  private var intensities: [RainIntensityType] = []
+  private var maxIntensity: RainIntensityType
+  private var scale: Double
+  
   public init(data: [PrecipitationData], selectedIndex: Int) {
     self.data = data
     self.selectedIndex = selectedIndex
-  }
-  
-  let data: [PrecipitationData]
-  let selectedIndex: Int
-  
-  @Environment(\.colorScheme) var colorScheme
-  
-  var intensities: [RainIntensityType] {
-    guard
-      let max = data.compactMap({ $0.measurement }).max(),
-      max.value > 0.0
-    else { fatalError() }
-    return RainIntensityType.allCases
-      .filter {
-        $0.amount.lowerBound <= max.value + RainIntensityType.moderate.amount.lowerBound
-      }
-  }
-  
-  var maxIntensity: RainIntensityType {
-    intensities.last ?? .light
-  }
-  
-  var scale: Double {
-    intensities.map(\.subjectiveScale).reduce(0.0, +)
+    
+    if let maxPrecipitation = data.compactMap(\.measurement).max() {
+      self.maxPrecipitation = maxPrecipitation
+      
+      guard maxPrecipitation.value.sign == .plus else { fatalError("Invalid Negative Rain") }
+      self.intensities = RainIntensityType.allCases
+        .filter { $0.amount.lowerBound <= maxPrecipitation.value }
+    }
+    
+    self.maxIntensity = intensities.last ?? .light
+    self.scale = intensities.map(\.subjectiveScale).reduce(0.0, +)
   }
   
   public var body: some View {
     ZStack(alignment: Alignment(horizontal: .center, vertical: .bottom)) {
       if data.isEmpty {
-        Label("No data", systemImage: "xmark.shield.fill")
-          .fixedSize()
-          .foregroundColor(.secondary)
-          .padding()
-        
+        Rectangle()
+          .fill(Color.clear)
+          .overlay(
+            Label("No data", systemImage: "xmark.shield.fill")
+              .foregroundColor(.secondary)
+          )
       }
       else if data.compactMap({ $0.measurement?.value }).reduce(0, +) == 0 {
-        Label("No rain expected", systemImage: "shield.lefthalf.fill")
-          .fixedSize()
-          .foregroundColor(.secondary)
-          .padding()
+        Rectangle()
+          .fill(Color.clear)
+          .overlay(
+            Label("No rain expected", systemImage: "shield.lefthalf.fill")
+              .foregroundColor(.secondary)
+          )
       }
       else {
         GeometryReader { geometry in
@@ -75,15 +76,15 @@ public struct RainIntensityGraph: View {
           
           VStack {
             Spacer()
+            if let max = maxPrecipitation {
+              Group {
+                Text("max: ") + Text(max, formatter: Formatters.shared.precipitation)
+              }
+              .font(.caption)
+              .padding(2).background(Color.controlBackground)
+            }
             HStack(alignment: .bottom, spacing: 0) {
               ForEach(data, id: \.date) { data in
-                // VStack {
-                
-                // if index == selectedIndex {
-                //   Image(systemName: "arrow.down")
-                //     .foregroundColor(.secondary)
-                // }
-                
                 if let measurement = data.measurement {
                   Rectangle()
                     .fill(Color.purple)
@@ -104,8 +105,6 @@ public struct RainIntensityGraph: View {
                       height: 0
                     )
                 }
-                
-                // }
               }
             }
           }
@@ -116,7 +115,8 @@ public struct RainIntensityGraph: View {
             timestamps: []
           )
           
-        }.drawingGroup()
+        }
+        .drawingGroup()
       }
     }
   }

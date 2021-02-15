@@ -18,7 +18,7 @@ extension Color {
   
   public static var moduleSelection: Color {
     #if os(macOS)
-    return Color(.selectedControlColor)
+    return .accentColor
     #else
     return .accentColor
     #endif

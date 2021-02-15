@@ -61,6 +61,7 @@ public let geocoderReducer = Reducer<GeocoderState, GeocoderAction, GeocoderEnvi
         .map(GeocoderAction.geocodingResponse)
       
     case let .geocodingResponse(.success(result)):
+      state.places.removeAll()
       state.places = result
       return .none
       

@@ -38,8 +38,8 @@ public extension MapSnapshotClient {
       
       let snapShotter = MKMapSnapshotter(options: mapSnapshotOptions)
       snapShotter.start { (snap, error) in
-        guard let data = snap?.image.tiffRepresentation else { return callback(.failure(.mapSnapshotterError)) }
-        callback(.success(MapSnapshotImage(data: data)))
+        guard let image = snap?.image else { return callback(.failure(.mapSnapshotterError)) }
+        callback(.success(MapSnapshotImage(image: image)))
       }
     }
   }

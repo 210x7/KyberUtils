@@ -9,14 +9,18 @@ import ComposableArchitecture
 import SwiftUI
 
 public struct SearchBarView: View {
-  public init(store: Store<KyberSearch, KyberSearchAction>) {
+  public init(store: Store<SearchState, SearchAction>) {
     self.store = store
   }
   
-  let store: Store<KyberSearch, KyberSearchAction>
+  let store: Store<SearchState, SearchAction>
   
   public var body: some View {
     WithViewStore(store) { viewStore in
+      #if os(macOS)
+      SearchFieldRepresentable(viewStore: viewStore)
+        .help("Search for a place or address")
+      #else
       HStack {
         ZStack {
           if viewStore.isLoading {
@@ -35,7 +39,7 @@ public struct SearchBarView: View {
           "Search for a place or address",
           text: viewStore.binding(
             get: { $0.query },
-            send: KyberSearchAction.onQueryChanged
+            send: SearchAction.onQueryChanged
           ),
           onEditingChanged: { viewStore.send(.onEditingChanged($0)) },
           onCommit: { viewStore.send(.onCommit) }
@@ -59,6 +63,66 @@ public struct SearchBarView: View {
           .transition(AnyTransition.move(edge: .trailing).combined(with: .opacity))
         }
       }
+      #endif
     }
+  }
+}
+
+
+struct SearchFieldRepresentable: NSViewRepresentable {
+  
+  let viewStore: ViewStore<SearchState, SearchAction>
+  
+  public func makeNSView(context: Context) -> NSSearchField {
+    let nsView = NSSearchField()
+    nsView.placeholderString = "Search"
+    nsView.delegate = context.coordinator
+    nsView.target = context.coordinator
+    nsView.action = #selector(context.coordinator.performAction(_:))
+    
+    nsView.bezelStyle = .roundedBezel
+    nsView.cell?.sendsActionOnEndEditing = false
+    nsView.isBordered = false
+    nsView.isBezeled = true
+    
+    return nsView
+  }
+  
+  public func updateNSView(_ nsView: NSSearchField, context: Context) {
+  }
+  
+  final public class Coordinator: NSObject, NSSearchFieldDelegate {
+    var base: SearchFieldRepresentable
+    
+    init(base: SearchFieldRepresentable) {
+      self.base = base
+    }
+    
+    public func controlTextDidChange(_ notification: Notification) {
+      guard let textField = notification.object as? NSTextField else {
+        return
+      }
+      
+      base.viewStore.send(.onQueryChanged(textField.stringValue))
+    }
+    
+    public func controlTextDidBeginEditing(_ notification: Notification) {
+      //base.onEditingChanged(true)
+    }
+    
+    public func controlTextDidEndEditing(_ notification: Notification) {
+      if let placemark = base.viewStore.result {
+        base.viewStore.send(.didSelect(placemark))
+      }
+    }
+    
+    @objc
+    fileprivate func performAction(_ sender: NSTextField?) {
+      //base.onCommit()
+    }
+  }
+  
+  public func makeCoordinator() -> Coordinator {
+    Coordinator(base: self)
   }
 }
