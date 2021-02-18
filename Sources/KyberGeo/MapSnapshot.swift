@@ -19,7 +19,7 @@ public struct MapSnapshotImage: View, Equatable {
     #if os(macOS)
     Image(nsImage: image).resizable().scaledToFit()
     #else
-    Image(uiImage: image).resizable()
+    Image(uiImage: image).resizable().scaledToFit()
     #endif
   }
 }
