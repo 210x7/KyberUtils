@@ -27,6 +27,10 @@ let package = Package(
       name: "KyberCommon",
       targets: ["KyberCommon"]
     ),
+    .library(
+      name: "KyberAstro",
+      targets: ["KyberAstro"]
+    ),
   ],
   dependencies: [
     // Dependencies declare other packages that this package depends on.
@@ -53,7 +57,8 @@ let package = Package(
     .target(
       name: "KyberGraphs",
       dependencies: [
-        .target(name:  "KyberCommon")
+        .target(name: "KyberCommon"),
+        .target(name: "KyberAstro")
       ]),
     .testTarget(
       name: "KyberGraphsTests",
@@ -80,6 +85,14 @@ let package = Package(
     .testTarget(
       name: "KyberCommonTests",
       dependencies: ["KyberCommon"]
+    ),
+    .target(
+      name: "KyberAstro",
+      dependencies: [
+      ]),
+    .testTarget(
+      name: "KyberAstroTests",
+      dependencies: ["KyberAstro"]
     ),
   ]
 )
