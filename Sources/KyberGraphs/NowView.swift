@@ -1,5 +1,5 @@
 //
-//  Now.swift
+//  NowView.swift
 //  
 //
 //  Created by Cristian Díaz on 19.02.21.
@@ -11,42 +11,12 @@ import KyberCommon
 import KyberGeo
 import SwiftUI
 
-public struct Now {
-  public init(timestamp: Date, sunset: Date?, sunrise: Date?, weatherCodeImage: Image?, weatherCodeDescription: String?, temperature: Measurement<UnitTemperature>?, precipitation: Measurement<UnitLength>?, windDirection: Measurement<UnitAngle>?, windSpeed: Measurement<UnitSpeed>?, visibility: Measurement<UnitLength>?, pressure: Measurement<UnitPressure>?, humidty: Int?) {
-    self.timestamp = timestamp
-    self.sunset = sunset
-    self.sunrise = sunrise
-    self.weatherCodeImage = weatherCodeImage
-    self.weatherCodeDescription = weatherCodeDescription
-    self.temperature = temperature
-    self.precipitation = precipitation
-    self.windDirection = windDirection
-    self.windSpeed = windSpeed
-    self.visibility = visibility
-    self.pressure = pressure
-    self.humidty = humidty
-  }
-  
-  let timestamp: Date
-  let sunset: Date?
-  let sunrise: Date?
-  let weatherCodeImage: Image?
-  let weatherCodeDescription: String?
-  let temperature: Measurement<UnitTemperature>?
-  let precipitation: Measurement<UnitLength>?
-  let windDirection: Measurement<UnitAngle>?
-  let windSpeed: Measurement<UnitSpeed>?
-  let visibility: Measurement<UnitLength>?
-  let pressure: Measurement<UnitPressure>?
-  let humidty: Int?
-}
-
 public struct NowView: View {
-  public init(now: Now) {
+  public init(now: WeatherDataPoint) {
     self.now = now
   }
   
-  let now: Now
+  let now: WeatherDataPoint
 
   public var body: some View {
     VStack(alignment: .leading) {
