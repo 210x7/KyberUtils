@@ -12,20 +12,10 @@ public typealias PrecipitationData = (date: Date, measurement: Measurement<UnitL
 
 
 public struct RainIntensityGraph: View {
-  
-  private let data: [PrecipitationData]
-  private let selectedIndex: Int
-  
-  @Environment(\.colorScheme) private var colorScheme
-  
-  private var maxPrecipitation: Measurement<UnitLength>?
-  private var intensities: [RainIntensityType] = []
-  private var maxIntensity: RainIntensityType
-  private var scale: Double
-  
-  public init(data: [PrecipitationData], selectedIndex: Int) {
+  public init(data: [PrecipitationData], selectedIndex: Int, useSpacing: Bool = false) {
     self.data = data
     self.selectedIndex = selectedIndex
+    self.useSpacing = useSpacing
     
     if let maxPrecipitation = data.compactMap(\.measurement).max() {
       self.maxPrecipitation = maxPrecipitation
@@ -38,6 +28,17 @@ public struct RainIntensityGraph: View {
     self.maxIntensity = intensities.last ?? .light
     self.scale = intensities.map(\.subjectiveScale).reduce(0.0, +)
   }
+  
+  let data: [PrecipitationData]
+  let selectedIndex: Int
+  
+  @Environment(\.colorScheme) private var colorScheme
+  
+  var maxPrecipitation: Measurement<UnitLength>?
+  var intensities: [RainIntensityType] = []
+  let maxIntensity: RainIntensityType
+  let scale: Double
+  let useSpacing: Bool
   
   public var body: some View {
     ZStack(alignment: Alignment(horizontal: .center, vertical: .bottom)) {
@@ -59,20 +60,23 @@ public struct RainIntensityGraph: View {
       }
       else {
         GeometryReader { geometry in
-          let columnWidth = geometry.size.width / CGFloat(data.count)
           
-          HStack(spacing: 0) {
-            ForEach(data, id: \.date) { data in
-              let components = Calendar.current.dateComponents([.hour], from: (data.date))
-              if components.hour == 0 {
-                Divider().frame(width: columnWidth)
-              }
-              else {
-                Divider().frame(width: columnWidth, height: 0)
+          let columnWidth = geometry.size.width / CGFloat(data.count)
+          //FIXME: when granularity is hourly, this makes no sense
+          if !useSpacing {
+            HStack(spacing: 0) {
+              ForEach(data, id: \.date) { data in
+                let components = Calendar.current.dateComponents([.hour], from: (data.date))
+                if components.hour == 0 {
+                  Divider().frame(width: columnWidth)
+                }
+                else {
+                  Divider().frame(width: columnWidth, height: 0)
+                }
               }
             }
+            .frame(height: geometry.size.height)
           }
-          .frame(height: geometry.size.height)
           
           VStack {
             Spacer()
@@ -83,21 +87,20 @@ public struct RainIntensityGraph: View {
               .font(.caption)
               .padding(2).background(Color.controlBackground)
             }
-            HStack(alignment: .bottom, spacing: 0) {
+            
+            HStack(alignment: .bottom, spacing: useSpacing ? 0.5 : 0) {
               ForEach(data, id: \.date) { data in
                 if let measurement = data.measurement {
                   Rectangle()
                     .fill(Color.purple)
                     .frame(
-                      width: columnWidth,
                       height: ruleOfThree(
                         base: maxIntensity.subjectiveScale,
                         extreme: Double(geometry.size.height),
                         given: measurement.value
                       )
                     )
-                }
-                else {
+                } else {
                   Circle()
                     .fill(Color.red)
                     .frame(

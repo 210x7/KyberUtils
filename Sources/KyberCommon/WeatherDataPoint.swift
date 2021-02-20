@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+/// Adapter to homogenize values coming from different APIs but presented using similar components
+/// (e.g DWD, ClimaCell)
 public struct WeatherDataPoint {
   public init(timestamp: Date, sunset: Date?, sunrise: Date?, weatherCodeImage: Image?, weatherCodeDescription: String?, temperature: Measurement<UnitTemperature>?, precipitation: Measurement<UnitLength>?, windDirection: Measurement<UnitAngle>?, windSpeed: Measurement<UnitSpeed>?, visibility: Measurement<UnitLength>?, pressure: Measurement<UnitPressure>?, humidty: Int?) {
     self.timestamp = timestamp

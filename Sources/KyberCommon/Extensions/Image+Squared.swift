@@ -8,7 +8,7 @@
 import SwiftUI
 
 public extension Image {
-  func squared(_ alignment: Alignment = .leading) -> some View {
+  func boxed(_ alignment: Alignment = .leading) -> some View {
     Rectangle()
       .fill(Color.clear)
       .overlay(

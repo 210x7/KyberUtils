@@ -20,12 +20,11 @@ public struct NowView: View {
 
   public var body: some View {
     VStack(alignment: .leading) {
-      HStack(alignment: .bottom) {
+      HStack {
         if let weatherCodeImage = now.weatherCodeImage {
           weatherCodeImage
-            .resizable()
-            .scaledToFit()
-            .frame(maxHeight: 44)
+            .boxed()
+            .frame(height: 77)
         }
         
         VStack(alignment: .leading) {
