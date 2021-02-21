@@ -63,7 +63,7 @@ public struct TomorrowView: View {
         }
       }
       .padding(.bottom)
-    }
+    }.workaroundForVerticalScrollingBugInMacOS()
     .frame(idealHeight: 180)
   }
 }
