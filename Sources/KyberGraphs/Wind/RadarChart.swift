@@ -1,6 +1,6 @@
 //
 //  RadarChart.swift
-//  
+//
 //
 //  Created by Cristian Díaz on 27.01.21.
 //
@@ -11,13 +11,13 @@ public struct RadarChart: View {
   var data: [Double]
   let gridColor: Color
   let dataColor: Color
-  
+
   public init(data: [Double], gridColor: Color = .gray, dataColor: Color = .blue) {
     self.data = data
     self.gridColor = gridColor
     self.dataColor = dataColor
   }
-  
+
   public var body: some View {
     VStack {
       Text("N")
@@ -26,10 +26,10 @@ public struct RadarChart: View {
         ZStack {
           RadarChartGrid(categories: data.count, divisions: 10)
             .stroke(gridColor, lineWidth: 0.5)
-          
+
           RadarChartPath(data: data)
             .fill(dataColor.opacity(0.3))
-          
+
           RadarChartPath(data: data)
             .stroke(dataColor, lineWidth: 2.0)
         }
