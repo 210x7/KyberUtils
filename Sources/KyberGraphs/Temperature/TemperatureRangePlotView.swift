@@ -1,37 +1,41 @@
 //
 //  TemperatureRangePlotView.swift
-//  
+//
 //
 //  Created by Cristian Díaz on 21.02.21.
 //
 
-import SwiftUI
 import KyberCommon
+import SwiftUI
 
 public struct TemperatureRangePlotView: View {
   typealias GroupedTemperatureRange = (date: Date, measurements: [Measurement<UnitTemperature>])
-  
+
   public init(data: [TemperatureData], selectedIndex: Int, containerSize: CGSize) {
     self.data = data
     self.selectedIndex = selectedIndex
     self.containerSize = containerSize
-    
+
     let calendar = Calendar.current
-    self.groupedDates = Dictionary(grouping: data) {
+    groupedDates = Dictionary(grouping: data) {
       calendar.dateComponents([.day, .month, .year], from: $0.date)
     }
     .map { (calendar.date(from: $0)!, $1.compactMap(\.measurement)) }
-    
-    guard let minTemperature = data.compactMap(\.measurement).min() else { fatalError("Temperature range requires minimum") }
+
+    guard let minTemperature = data.compactMap(\.measurement).min() else {
+      fatalError("Temperature range requires minimum")
+    }
     self.minTemperature = minTemperature
-    
-    guard let maxTemperature = data.compactMap(\.measurement).max() else { fatalError("Temperature range requires maximum") }
+
+    guard let maxTemperature = data.compactMap(\.measurement).max() else {
+      fatalError("Temperature range requires maximum")
+    }
     self.maxTemperature = maxTemperature
-    
-    self.averageTemperature = (minTemperature + maxTemperature) / 2
-    
-    self.columnWidth = (containerSize.width) / CGFloat(groupedDates.count)
-    self.base = {
+
+    averageTemperature = (minTemperature + maxTemperature) / 2
+
+    columnWidth = containerSize.width / CGFloat(groupedDates.count)
+    base = {
       if minTemperature.value.sign == .plus {
         return maxTemperature.value
       } else {
@@ -39,23 +43,22 @@ public struct TemperatureRangePlotView: View {
       }
     }()
   }
-  
-  
+
   let data: [TemperatureData]
   let selectedIndex: Int
   let containerSize: CGSize
-  
+
   // private let calendar = Calendar.current
   private var groupedDates: [GroupedTemperatureRange] = []
-  
+
   private let minTemperature: Measurement<UnitTemperature>
   private let maxTemperature: Measurement<UnitTemperature>
   private let averageTemperature: Measurement<UnitTemperature>
-  
+
   private let base: Double
   private let baseExtraPadding: Double = 3
   private let columnWidth: CGFloat
-  
+
   private func offset(value: Double) -> CGFloat {
     ruleOfThree(
       base: base,
@@ -63,7 +66,7 @@ public struct TemperatureRangePlotView: View {
       given: value
     )
   }
-  
+
   private func backgroundHeigth() -> CGFloat {
     ruleOfThree(
       base: base,
@@ -72,20 +75,20 @@ public struct TemperatureRangePlotView: View {
         switch (maxTemperature.value.sign, minTemperature.value.sign) {
         case (.plus, .plus):
           return .zero
-          
+
         case (.minus, .minus):
           return base
-          
+
         case (.plus, .minus):
           return minTemperature.value.magnitude
-          
+
         default:
           return .zero
         }
       }()
     )
   }
-  
+
   public var body: some View {
     VStack(spacing: 0) {
       Rectangle().fill(Color.pink)
@@ -102,11 +105,11 @@ public struct TemperatureRangePlotView: View {
                 let min = data.measurements.min()?.value,
                 let max = data.measurements.max()?.value
               else { return 0 }
-              
+
               return averageTemperature.value - (max.sign == .plus ? min : max)
             }()
           )
-          
+
           Rectangle()
             .frame(
               width: columnWidth,
@@ -124,7 +127,6 @@ public struct TemperatureRangePlotView: View {
     )
   }
 }
-
 
 //// let columnWidth = proxy.size.width / CGFloat(groupedDates.count)
 //
