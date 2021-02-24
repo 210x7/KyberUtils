@@ -1,13 +1,13 @@
 //
 //  NextHourView.swift
-//  
+//
 //
 //  Created by Cristian Díaz on 19.02.21.
 //
 
-import SwiftUI
 import KyberCommon
 import KyberGeo
+import SwiftUI
 
 func comparisonIcon<T: Comparable>(previous: T, current: T) -> Image {
   if previous > current {
@@ -24,14 +24,16 @@ public struct NextHourView: View {
     self.now = now
     self.nextHour = nextHour
   }
-  
+
   let now: WeatherDataPoint?
   let nextHour: WeatherDataPoint
-  
+  let columns: [GridItem] = [
+    GridItem(.adaptive(minimum: 180, maximum: 360), spacing: 8)
+  ]
+
   public var body: some View {
     VStack(alignment: .leading) {
-      if
-        let temperature = nextHour.temperature,
+      if let temperature = nextHour.temperature,
         let condition = nextHour.weatherCodeDescription,
         let weatherCodeImage = nextHour.weatherCodeImage,
         let precipitation = nextHour.precipitation,
@@ -40,33 +42,36 @@ public struct NextHourView: View {
         let windSpeed = nextHour.windSpeed,
         let visibility = nextHour.visibility
       {
-        VStack(alignment: .leading) {
-          HStack {
-            weatherCodeImage
-              .boxed()
-              .frame(height: 22)
-            
-            if let previousTemperature = now?.temperature {
-              comparisonIcon(
-                previous: previousTemperature,
-                current: temperature
-              )
-              .foregroundColor(.secondary)
-              Divider().frame(maxHeight: 33)
-            }
-            
-            if let temperature = nextHour.temperature {
-              Text(
-                temperature.forcingPositiveZero(),
-                formatter: Formatters.shared.temperature
-              )
-              .font(.title2)
-            }
-            
-            Text(condition).font(.subheadline)
+        //MARK: Weather Code
+        HStack {
+          weatherCodeImage
+            .boxed()
+            .frame(height: 22)
+
+          if let previousTemperature = now?.temperature {
+            comparisonIcon(
+              previous: previousTemperature,
+              current: temperature
+            )
+            .foregroundColor(.secondary)
+            Divider().frame(maxHeight: 33)
           }
-          .padding(.leading, 8)
+
+          if let temperature = nextHour.temperature {
+            Text(
+              temperature.forcingPositiveZero(),
+              formatter: Formatters.shared.temperature
+            )
+            .font(.title2)
+          }
+
+          Text(condition).font(.subheadline)
           
+          Spacer()
+        }
+        .padding(.leading, 8)
+        
+        LazyVGrid(columns: columns, alignment: .leading) {
           //MARK: Precipitation
           GroupBox {
             HStack {
@@ -83,11 +88,11 @@ public struct NextHourView: View {
                 Text("amount").font(.caption).foregroundColor(.secondary)
                 Text(precipitation, formatter: Formatters.shared.precipitation)
               }
-              
+
               Spacer()
             }
           }
-          
+
           //MARK: Wind
           GroupBox {
             HStack {
@@ -99,16 +104,16 @@ public struct NextHourView: View {
                 .foregroundColor(.secondary)
                 Divider().frame(maxHeight: 33)
               }
-              
+
               Image(systemName: "wind")
               VStack(alignment: .leading, spacing: 2) {
                 Text("speed").font(.caption).foregroundColor(.secondary)
                 Text(windSpeed, formatter: Formatters.shared.speed)
               }
-              
+
               Divider()
                 .frame(maxHeight: 33)
-              
+
               VStack(alignment: .leading, spacing: 2) {
                 Text("direction").font(.caption).foregroundColor(.secondary)
                 HStack(spacing: 4) {
@@ -123,7 +128,7 @@ public struct NextHourView: View {
               Spacer()
             }
           }
-          
+
           //MARK: Visibility
           GroupBox {
             HStack {
@@ -143,7 +148,7 @@ public struct NextHourView: View {
               Spacer()
             }
           }
-          
+
           //MARK: Pressure/Humidity
           GroupBox {
             VStack(spacing: 0) {
@@ -158,12 +163,13 @@ public struct NextHourView: View {
                     Divider().frame(height: 33)
                   }
                   Image(systemName: "barometer")
-                  Text(pressure, formatter: Formatters.shared.measurement).padding([.top, .bottom], 4)
+                  Text(pressure, formatter: Formatters.shared.measurement).padding(
+                    [.top, .bottom], 4)
                   Spacer()
                 }
               }
-              
-              if let humidity = nextHour.humidty  {
+
+              if let humidity = nextHour.humidty {
                 HStack {
                   if let previousHumidity = now?.humidty {
                     comparisonIcon(
@@ -174,13 +180,13 @@ public struct NextHourView: View {
                     Divider().frame(height: 33)
                   }
                   //Image(systemName: "barometer")
-                  Text("\(humidity)%").padding([.top, .bottom], 4)//TODO: make proper formatter
+                  Text("\(humidity)%").padding([.top, .bottom], 4)  //TODO: make proper formatter
                   Spacer()
                 }
               }
             }
           }
-        
+
           //if let humidity = nextHour.humidity {
           //  Text("\(humidity)")
           //}
@@ -195,7 +201,7 @@ public struct NextHourView: View {
           //    )
           //  }
           //}
-          
+
         }
       }
     }
