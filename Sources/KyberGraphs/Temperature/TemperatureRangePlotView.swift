@@ -48,7 +48,6 @@ public struct TemperatureRangePlotView: View {
   let selectedIndex: Int
   let containerSize: CGSize
 
-  // private let calendar = Calendar.current
   private var groupedDates: [GroupedTemperatureRange] = []
 
   private let minTemperature: Measurement<UnitTemperature>
@@ -127,21 +126,3 @@ public struct TemperatureRangePlotView: View {
     )
   }
 }
-
-//// let columnWidth = proxy.size.width / CGFloat(groupedDates.count)
-//
-//          HStack(alignment: .top, spacing: 1) {
-//            ForEach(groupedDates.sorted(by: <), id: \.date) {
-//              Text($0.date, formatter: Formatters.shared.weekday)
-//                .font(.caption)
-//                .foregroundColor(.secondary)
-//                .frame(maxWidth: .infinity)
-//// .frame(width: columnWidth)
-//
-//              Divider().frame(width: 1)
-//            }
-//          }
-//          .frame(width: proxy.size.width)
-//
-//// .padding(7)
-//          .border(Color.purple)
