@@ -35,7 +35,7 @@ let package = Package(
   dependencies: [
     // Dependencies declare other packages that this package depends on.
     // .package(url: /* package url */, from: "1.0.0"),
-    .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "0.15.0"),
+    .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "0.16.0"),
     .package(url: "https://github.com/pointfreeco/composable-core-location", from: "0.1.0")
     //.package(url: "https://github.com/OAuthSwift/OAuthSwift.git", from: "2.1.0"),
     //.package(url: "https://github.com/pichukov/LightChart", from: "1.0.0"),
