@@ -27,11 +27,15 @@ let package = Package(
       name: "KyberCommon",
       targets: ["KyberCommon"]
     ),
+    .library(
+      name: "KyberAstro",
+      targets: ["KyberAstro"]
+    ),
   ],
   dependencies: [
     // Dependencies declare other packages that this package depends on.
     // .package(url: /* package url */, from: "1.0.0"),
-    .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "0.14.0"),
+    .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "0.16.0"),
     .package(url: "https://github.com/pointfreeco/composable-core-location", from: "0.1.0")
     //.package(url: "https://github.com/OAuthSwift/OAuthSwift.git", from: "2.1.0"),
     //.package(url: "https://github.com/pichukov/LightChart", from: "1.0.0"),
@@ -53,7 +57,8 @@ let package = Package(
     .target(
       name: "KyberGraphs",
       dependencies: [
-        .target(name:  "KyberCommon")
+        .target(name: "KyberCommon"),
+        .target(name: "KyberAstro")
       ]),
     .testTarget(
       name: "KyberGraphsTests",
@@ -80,6 +85,14 @@ let package = Package(
     .testTarget(
       name: "KyberCommonTests",
       dependencies: ["KyberCommon"]
+    ),
+    .target(
+      name: "KyberAstro",
+      dependencies: [
+      ]),
+    .testTarget(
+      name: "KyberAstroTests",
+      dependencies: ["KyberAstro"]
     ),
   ]
 )
