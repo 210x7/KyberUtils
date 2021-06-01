@@ -9,38 +9,52 @@ import ComposableArchitecture
 import ComposableCoreLocation
 
 public struct SearchState: Equatable {
-  public init(geocoder: GeocoderState = GeocoderState(), query: String = "", result: CLPlacemark? = nil, isCancelVisible: Bool = false, isLoading: Bool = false) {
+  var geocoder: GeocoderState
+  var isCancelVisible: Bool
+  var isInitial: Bool
+  var isLoading: Bool
+  var isSearchPresented: Bool
+  public var query: String
+  public var result: CLPlacemark?
+  public var selectedPlace: CLPlacemark?
+
+  public init(
+    geocoder: GeocoderState = .init(),
+    isCancelVisible: Bool = false,
+    isInitial: Bool = true,
+    isLoading: Bool = false,
+    isSearchPresented: Bool = false,
+    query: String = "",
+    result: CLPlacemark? = nil
+  ) {
     self.geocoder = geocoder
+    self.isCancelVisible = isCancelVisible
+    self.isInitial = isInitial
+    self.isLoading = isLoading
+    self.isSearchPresented = isSearchPresented
     self.query = query
     self.result = result
-    self.isCancelVisible = isCancelVisible
-    self.isLoading = isLoading
   }
-  
-  var geocoder: GeocoderState
-  var query = ""
-  public var result: CLPlacemark?
-  var isCancelVisible = false
-  var isLoading = false
 }
 
 public enum SearchAction: Equatable {
-  case geocoder(GeocoderAction)
-  case onQueryChanged(String)
-  case onEditingChanged(Bool)
-  case onCommit
   case cleanup
   case didSelect(CLPlacemark)
+  case geocoder(GeocoderAction)
+  case initial(Location)
+  case onQueryChanged(String)
+  case onCommit
+  case setSearch(isPresented: Bool)
 }
 
 public struct SearchEnvironment {
+  var geocoderClient: GeocoderClient
+  var mainQueue: AnySchedulerOf<DispatchQueue>
+
   public init(geocoderClient: GeocoderClient, mainQueue: AnySchedulerOf<DispatchQueue>) {
     self.geocoderClient = geocoderClient
     self.mainQueue = mainQueue
   }
-  
-  var geocoderClient: GeocoderClient
-  var mainQueue: AnySchedulerOf<DispatchQueue>
 }
 
 public let searchReducer = Reducer<SearchState, SearchAction, SearchEnvironment>.combine(
@@ -55,52 +69,60 @@ public let searchReducer = Reducer<SearchState, SearchAction, SearchEnvironment>
     }
   ),
   Reducer { (state, action, environment) in
+
     switch action {
-    
-    case let .onQueryChanged(query):
-      guard !query.isEmpty else {
-        state.isCancelVisible = false
-        state.result = nil
-        return.none
-      }
-      struct QueryId: Hashable {}
-      
-      state.query = query
-      state.isCancelVisible = true
-      state.isLoading = true
-      return Effect(value: .geocoder(.locationFromAddress(query)))        .debounce(id: QueryId(), for: 0.3, scheduler: environment.mainQueue)      
-      
-    case let .onEditingChanged(changed):
-      // guard state.query.isEmpty else {
-      //   return.none
-      // }
-      return .none
-      
-    case .onCommit:
-      //state.isCancelVisible = false
-      //state.isResultVisible = true
-      return .none
-      
     case .cleanup:
-      state.query = ""
       state.isCancelVisible = false
+      state.query = ""
       state.result = nil
       return .none
-      
-    case .didSelect(_):
+
+    case .didSelect(let place):
+      state.isSearchPresented = false
+      state.selectedPlace = place
       return Effect(value: .cleanup)
-      
+
     case let .geocoder(.geocodingResponse(.success(result))):
-      state.result = result.first
+      if state.isInitial {
+        state.selectedPlace = result.first
+        state.isInitial = false
+      }
       state.isLoading = false
+      state.result = result.first
       return .none
-      
+
     case .geocoder(.geocodingResponse(.failure)):
       state.result = nil
       state.isLoading = false
       return .none
-      
+
     case .geocoder(_):
+      return .none
+
+    case .initial(let location):
+      return Effect(value: .geocoder(.addressFromLocation(location)))
+
+    case let .onQueryChanged(query):
+      guard !query.isEmpty else {
+        state.isCancelVisible = false
+        state.result = nil
+        return .none
+      }
+      struct QueryId: Hashable {}
+
+      state.isCancelVisible = true
+      state.isSearchPresented = true
+      state.isLoading = true
+      state.query = query
+      return Effect(value: .geocoder(.locationFromAddress(query)))
+        .debounce(id: QueryId(), for: 0.3, scheduler: environment.mainQueue)
+
+    case .onCommit:
+      guard let place = state.result else { return .none }
+      return Effect(value: .didSelect(place))
+
+    case .setSearch(let isPresented):
+      state.isSearchPresented = isPresented
       return .none
     }
   }

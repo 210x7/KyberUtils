@@ -26,6 +26,7 @@ public struct Hygrometer: View {
         Circle()
           .trim(from: 0, to: CGFloat(sectionSize))
           .stroke(style: StrokeStyle(lineWidth: 5, lineCap: .round))
+          //.foregroundColor(Color.yellow)
           .rotationEffect(.degrees(135))
           .overlay(
             Capsule()
@@ -41,7 +42,7 @@ public struct Hygrometer: View {
         
         VStack(spacing: 0) {
           Text("\(currentValue)").font(.headline)
-          Text("%").font(.subheadline).bold().foregroundColor(.secondary)
+          Text("%").font(.subheadline).foregroundColor(.secondary)
         }
         .padding(.top, 10)
       }

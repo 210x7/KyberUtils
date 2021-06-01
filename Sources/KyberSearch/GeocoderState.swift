@@ -37,9 +37,6 @@ public let geocoderReducer = Reducer<GeocoderState, GeocoderAction, GeocoderEnvi
     switch action {
     case let .locationFromAddress(address):
       struct QueryId: Hashable {}
-            
-      // When the query is cleared we can clear the search results, but we have to make sure to cancel
-      // any in-flight search requests too, otherwise we may get data coming in later.
       guard !address.isEmpty else {
         state.places.removeAll()
         return .cancel(id: QueryId())

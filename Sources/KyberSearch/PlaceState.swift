@@ -1,6 +1,6 @@
 //
 //  PlaceState.swift
-//  
+//
 //
 //  Created by Cristian Díaz on 31.08.20.
 //
@@ -9,14 +9,18 @@ import ComposableArchitecture
 import ComposableCoreLocation
 import Foundation
 
+/*
 public struct PlaceState: Equatable {
-  public init(place: CLPlacemark? = nil, geocoder: GeocoderState = GeocoderState()) {
+  public var placemark: CLPlacemark?
+  var geocoder: GeocoderState
+
+  public init(
+    place: CLPlacemark? = nil,
+    geocoder: GeocoderState = GeocoderState()
+  ) {
     self.placemark = place
     self.geocoder = geocoder
   }
-  
-  public var placemark: CLPlacemark?
-  var geocoder: GeocoderState
 }
 
 public enum PlaceAction: Equatable {
@@ -30,7 +34,7 @@ public struct PlaceEnvironment {
     self.geocoderClient = geocoderClient
     self.mainQueue = mainQueue
   }
-  
+
   var geocoderClient: GeocoderClient
   var mainQueue: AnySchedulerOf<DispatchQueue>
 }
@@ -48,19 +52,20 @@ public let placeReducer = Reducer<PlaceState, PlaceAction, PlaceEnvironment>.com
   ),
   Reducer { (state, action, environment) in
     switch action {
-    
+
     case let .placeFrom(location: location):
       return Effect(value: .geocoder(.addressFromLocation(location)))
-      
+
     case .didFound:
       return .none
-      
+
     case let .geocoder(.geocodingResponse(.success(result))):
       state.placemark = result.first
       return Effect(value: .didFound)
-      
+
     case .geocoder(_):
       return .none
     }
   }
 )
+*/

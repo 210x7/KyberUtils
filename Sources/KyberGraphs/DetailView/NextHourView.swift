@@ -48,14 +48,6 @@ public struct NextHourView: View {
             .boxed()
             .frame(height: 22)
 
-          if let previousTemperature = now?.temperature {
-            comparisonIcon(
-              previous: previousTemperature,
-              current: temperature
-            )
-            .foregroundColor(.secondary)
-            Divider().frame(maxHeight: 33)
-          }
 
           if let temperature = nextHour.temperature {
             Text(
@@ -65,11 +57,20 @@ public struct NextHourView: View {
             .font(.title2)
           }
 
-          Text(condition).font(.subheadline)
+          if let previousTemperature = now?.temperature {
+            comparisonIcon(
+              previous: previousTemperature,
+              current: temperature
+            )
+            .foregroundColor(.secondary)
+            Divider().frame(maxHeight: 33)
+          }
+
+          Text(condition)
           
           Spacer()
         }
-        .padding(.leading, 8)
+        .padding(8)
         
         LazyVGrid(columns: columns, alignment: .leading) {
           //MARK: Precipitation
@@ -169,9 +170,9 @@ public struct NextHourView: View {
                 }
               }
 
-              if let humidity = nextHour.humidty {
+              if let humidity = nextHour.humidity {
                 HStack {
-                  if let previousHumidity = now?.humidty {
+                  if let previousHumidity = now?.humidity {
                     comparisonIcon(
                       previous: previousHumidity,
                       current: humidity

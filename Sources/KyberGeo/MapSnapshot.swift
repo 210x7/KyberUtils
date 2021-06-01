@@ -8,7 +8,7 @@
 import SwiftUI
 import ComposableArchitecture
 
-public struct MapSnapshotImage: View, Equatable {
+public struct MapSnapshotImage: View, Equatable, Hashable {
   #if os(macOS)
   public let image: NSImage
   #else
