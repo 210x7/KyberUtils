@@ -1,6 +1,6 @@
 //
 //  AnyAnnotation.swift
-//  
+//
 //
 //  Created by Cristian Díaz on 22.01.21.
 //
@@ -9,17 +9,22 @@ import Foundation
 import MapKit
 
 open class AnyAnnotation: NSObject, MKAnnotation, Identifiable {
-  
-  public let id: String
+
   public let coordinate: CLLocationCoordinate2D
-  public let title: String?
+  public let id: String
   public let subtitle: String?
-  
-  public init(id: String, coordinate: CLLocationCoordinate2D, title: String?, subtitle: String?) {
-    self.id = id
+  public let title: String?
+
+  public init(
+    coordinate: CLLocationCoordinate2D,
+    id: String,
+    subtitle: String?,
+    title: String?
+  ) {
     self.coordinate = coordinate
-    self.title = title
+    self.id = id
     self.subtitle = subtitle
+    self.title = title
     super.init()
   }
 }

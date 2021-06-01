@@ -1,12 +1,11 @@
 //
-//  File.swift
-//  
+//  MockPlacemark.swift
+//
 //
 //  Created by Cristian Díaz on 07.09.20.
 //
 
 import CoreLocation
-
 
 class MockPlacemark: CLPlacemark {
   public override var administrativeArea: String? { "Mockland administrative area" }
@@ -16,6 +15,6 @@ class MockPlacemark: CLPlacemark {
   override var location: CLLocation? { CLLocation(latitude: 52.529088, longitude: 13.414381) }
 }
 
-public extension CLPlacemark {
-  static var mock: CLPlacemark { MockPlacemark() }
+extension CLPlacemark {
+  public static var mock: CLPlacemark { MockPlacemark() }
 }
