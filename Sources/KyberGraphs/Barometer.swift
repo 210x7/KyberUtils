@@ -5,18 +5,19 @@
 //  Created by Cristian Díaz on 28.01.21.
 //
 
+import KyberCommon
 import SwiftUI
 
 public struct Barometer: View {
   public init(
-    currentValue: Double,
+    currentValue: Measurement<UnitPressure>,
     humidity: Int
   ) {
-    self.currentValue = currentValue
+    self.pressure = currentValue
     self.humidity = humidity
   }
 
-  public let currentValue: Double
+  public let pressure: Measurement<UnitPressure>
   let humidity: Int
   let minValue: Int = 950
   let maxValue: Int = 1050
@@ -35,18 +36,16 @@ public struct Barometer: View {
   public var body: some View {
     HStack {
       Image(systemName: "cloud.rain.fill")
-        .foregroundColor(Color(.tertiaryLabelColor))
+        .foregroundColor(.purple)
 
       VStack {
         Image(systemName: "cloud.sun.fill")
-          .foregroundColor(Color(.tertiaryLabelColor))
-        //.padding(.bottom, 4)
+          .foregroundColor(.secondary)
 
         GeometryReader { proxy in
-          // ZStack {
           Circle()
             .trim(from: 0, to: CGFloat(sectionSize))
-            .stroke(style: StrokeStyle(lineWidth: 9, lineCap: .round))
+            .stroke(style: StrokeStyle(lineWidth: 6, lineCap: .round))
             .fill(
               AngularGradient(
                 gradient: Gradient(colors: colors),
@@ -57,49 +56,35 @@ public struct Barometer: View {
             )
             .rotationEffect(.degrees(135))
             .overlay(
-              Capsule()
+              Circle()
                 .fill(Color.controlBackground)
+                .colorInvert()
+                .overlay(Circle().stroke(Color.controlBackground, lineWidth: 2))
                 .offset(y: proxy.size.width / 2)
-                .frame(width: 11, height: 7)
-                .rotationEffect(.degrees(getAngle(value: currentValue)))
+                .frame(width: 16)
+                .rotationEffect(.degrees(getAngle(value: pressure.value)))
             )
             .overlay(
-              ZStack {
-                // Text("\(minValue)")
-                //   .rotationEffect(.degrees(getAngle(value: 4)))
-                //   .offset(y: proxy.size.width / 2 + 8)
-                //   .font(.caption)
-                //   .foregroundColor(.secondary)
-                //   .rotationEffect(.degrees(getAngle(value: 30)))
-                //
-                // Text("\(maxValue)")
-                //   .rotationEffect(.degrees(getAngle(value: 30)))
-                //   .offset(y: proxy.size.width / 2 + 8)
-                //   .font(.caption)
-                //   .foregroundColor(.secondary)
-                //   .rotationEffect(.degrees(getAngle(value: 270)))
-
-                VStack {
-                  Text("\(Int(currentValue))").font(.headline)
-                  Text("hPa").font(.subheadline).foregroundColor(.secondary)
-                }
-                .offset(y: -10)
+              VStack {
+                Text(pressure, formatter: pressureFormatter)
+                  .font(.title2.bold())
+                Text("pressure")
+                  .font(.caption)
+                  .foregroundColor(.secondary)
               }
+              .offset(y: -6)
             )
             .overlay(
               Hygrometer(currentValue: humidity)
-                .frame(width: proxy.size.width / 2.2, height: proxy.size.height / 2.2)
-                .offset(y: 6),
+                .frame(width: proxy.size.width / 2.1, height: proxy.size.height / 2.1)
+                .offset(y: 16),
               alignment: .bottom
             )
-
-          // }
-          // .aspectRatio(1, contentMode: .fit)
         }
       }
 
       Image(systemName: "sun.max.fill")
-        .foregroundColor(Color(.tertiaryLabelColor))
+        .foregroundColor(.yellow)
     }
     .aspectRatio(1, contentMode: .fit)
   }

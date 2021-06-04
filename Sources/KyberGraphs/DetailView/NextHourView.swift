@@ -27,9 +27,7 @@ public struct NextHourView: View {
 
   let now: WeatherDataPoint?
   let nextHour: WeatherDataPoint
-  let columns: [GridItem] = [
-    GridItem(.adaptive(minimum: 180, maximum: 360), spacing: 8)
-  ]
+  let columns: [GridItem] = [GridItem(.adaptive(minimum: 180, maximum: 360), spacing: 8)]
 
   public var body: some View {
     VStack(alignment: .leading) {
@@ -48,13 +46,9 @@ public struct NextHourView: View {
             .boxed()
             .frame(height: 22)
 
-
           if let temperature = nextHour.temperature {
-            Text(
-              temperature.forcingPositiveZero(),
-              formatter: Formatters.shared.temperature
-            )
-            .font(.title2)
+            Text(temperature, formatter: temperatureFormatter)
+              .font(.title2)
           }
 
           if let previousTemperature = now?.temperature {
@@ -63,15 +57,16 @@ public struct NextHourView: View {
               current: temperature
             )
             .foregroundColor(.secondary)
+
             Divider().frame(maxHeight: 33)
           }
 
           Text(condition)
-          
+
           Spacer()
         }
         .padding(8)
-        
+
         LazyVGrid(columns: columns, alignment: .leading) {
           //MARK: Precipitation
           GroupBox {
@@ -82,12 +77,13 @@ public struct NextHourView: View {
                   current: precipitation
                 )
                 .foregroundColor(.secondary)
+
                 Divider().frame(maxHeight: 33)
               }
               Image(systemName: "drop.fill")
               VStack(alignment: .leading) {
                 Text("amount").font(.caption).foregroundColor(.secondary)
-                Text(precipitation, formatter: Formatters.shared.precipitation)
+                Text(precipitation, formatter: precipitationFormatter)
               }
 
               Spacer()
@@ -109,7 +105,7 @@ public struct NextHourView: View {
               Image(systemName: "wind")
               VStack(alignment: .leading, spacing: 2) {
                 Text("speed").font(.caption).foregroundColor(.secondary)
-                Text(windSpeed, formatter: Formatters.shared.speed)
+                Text(windSpeed, formatter: speedFormatter)
               }
 
               Divider()
@@ -144,7 +140,7 @@ public struct NextHourView: View {
               Image(systemName: "eye")
               VStack(alignment: .leading) {
                 Text("distance").font(.caption).foregroundColor(.secondary)
-                Text(visibility, formatter: Formatters.shared.distance)
+                Text(visibility, formatter: distanceFormatter)
               }
               Spacer()
             }
@@ -164,7 +160,7 @@ public struct NextHourView: View {
                     Divider().frame(height: 33)
                   }
                   Image(systemName: "barometer")
-                  Text(pressure, formatter: Formatters.shared.measurement).padding(
+                  Text(pressure, formatter: pressureFormatter).padding(
                     [.top, .bottom], 4)
                   Spacer()
                 }
@@ -181,28 +177,13 @@ public struct NextHourView: View {
                     Divider().frame(height: 33)
                   }
                   //Image(systemName: "barometer")
-                  Text("\(humidity)%").padding([.top, .bottom], 4)  //TODO: make proper formatter
+                  Text(humidityFormatter.string(for: humidity) ?? "--")
+                    .padding([.top, .bottom], 4)
                   Spacer()
                 }
               }
             }
           }
-
-          //if let humidity = nextHour.humidity {
-          //  Text("\(humidity)")
-          //}
-          //
-          //if let pressure = nextHour.pressure,
-          //   let humidity = nextHour.humidity {
-          //  VStack {
-          //    Spacer()
-          //    Gauges(
-          //      pressure: pressure,
-          //      humidity: humidity
-          //    )
-          //  }
-          //}
-
         }
       }
     }

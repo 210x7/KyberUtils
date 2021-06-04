@@ -69,13 +69,18 @@ public struct TemperatureGraph: View {
             VStack {
               Group {
                 Text("max: ") + Text(maxTemperature, formatter: Formatters.shared.temperature)
-              }.padding(2).background(Color.controlBackground).offset(y: -2)
+              }
+              .padding(2)
+              .background(Color.controlBackground)
+              .offset(y: -2)
 
               Spacer()
 
               Group {
                 Text("min: ") + Text(minTemperature, formatter: Formatters.shared.temperature)
-              }.padding(2).background(Color.controlBackground)
+              }
+              .padding(2)
+              .background(Color.controlBackground)
             }
             .font(.caption)
 

@@ -32,8 +32,8 @@ public struct TomorrowView: View {
             Group {
               if let temperature = weatherPoint.temperature {
                 Text(
-                  temperature.forcingPositiveZero(),
-                  formatter: Formatters.shared.temperature
+                  temperature,
+                  formatter: temperatureFormatter
                 )
               } else {
                 Text(Formatters.placeholder)
@@ -42,7 +42,7 @@ public struct TomorrowView: View {
             .font(.title2)
 
             if let precipitation = weatherPoint.precipitation {
-              Text(precipitation, formatter: Formatters.shared.precipitation)
+              Text(precipitation, formatter: precipitationFormatter)
                 .font(.subheadline)
             }
 
@@ -55,10 +55,9 @@ public struct TomorrowView: View {
                 .rotationEffect(.degrees(windDirection.value + 180))
                 .padding([.top, .bottom], 2)
 
-              Text(windSpeed, formatter: Formatters.shared.speed).font(.footnote)
+              Text(windSpeed, formatter: speedFormatter).font(.footnote)
             }
           }
-          .drawingGroup()
 
           Divider()
         }
@@ -66,6 +65,5 @@ public struct TomorrowView: View {
       .padding(.bottom)
     }
     .workaroundForVerticalScrollingBugInMacOS()
-    .frame(idealHeight: 180)
   }
 }

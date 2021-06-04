@@ -22,6 +22,7 @@ public struct RadarChart: View {
     VStack {
       Text("N")
       HStack {
+        Spacer()
         Text("W")
         ZStack {
           RadarChartGrid(categories: data.count, divisions: 10)
@@ -33,10 +34,11 @@ public struct RadarChart: View {
           RadarChartPath(data: data)
             .stroke(dataColor, lineWidth: 2.0)
         }
-        .scaledToFill()
+        
         Text("E")
       }
       Text("S")
+      Spacer()
     }
     .font(.caption)
     .drawingGroup()

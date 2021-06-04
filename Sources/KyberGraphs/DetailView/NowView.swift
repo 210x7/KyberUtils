@@ -17,11 +17,11 @@ public struct NowView: View {
   }
 
   let now: WeatherDataPoint
-  let columns: [GridItem] = [GridItem(.adaptive(minimum: 180, maximum: 360), spacing: 8)]
+  let columns: [GridItem] = [.init(.adaptive(minimum: 180, maximum: 360), spacing: 8)]
 
   public var body: some View {
-    VStack(spacing: 16) {
-      //MARK: Weather Code
+    VStack(alignment: .leading, spacing: 32) {
+      //MARK: - Weather Code
       HStack {
         if let weatherCodeImage = now.weatherCodeImage {
           weatherCodeImage
@@ -30,35 +30,36 @@ public struct NowView: View {
         }
 
         VStack(alignment: .leading) {
-          if let temperature = now.temperature {
-            Text(temperature, formatter: Formatters.shared.temperature)
-              .font(.largeTitle)
-              .fixedSize()
+          Group {
+            if let temperature = now.temperature {
+              Text(temperature, formatter: temperatureFormatter)
+            } else {
+              Text("--")
+            }
           }
+          .font(.largeTitle.bold())
+          .fixedSize()
+
           Text(now.weatherCodeDescription ?? "--")
             .font(.subheadline).bold()
         }
-
-        Spacer()
       }
-      .padding(8)
 
       LazyVGrid(columns: columns, alignment: .leading) {
-        VStack {
+        VStack(alignment: .leading, spacing: 16) {
           //MARK: Precipitation
           if let precipitation = now.precipitation {
             GroupBox(
-              label: Label("Precipitation", systemImage: "drop.fill").foregroundColor(
-                Color(.controlTextColor))
-            ) {
-              HStack {
-                VStack(alignment: .leading) {
-                  Text("amount").font(.caption).foregroundColor(.secondary)
-                  Text(precipitation, formatter: Formatters.shared.precipitation)
-                }
-                Spacer()
+              label: Label("Precipitation", systemImage: "drop.fill"),
+              content: {
+                Label(
+                  title: { Text(precipitation, formatter: precipitationFormatter) },
+                  icon: { Text("amount") }
+                )
+                .labelStyle(MeasurementLabelStyle())
               }
-            }
+            )
+            .groupBoxStyle(MeasurementGroupBoxStyle(labelColor: Color(.controlTextColor)))
           }
 
           //MARK: Wind Direction
@@ -67,49 +68,55 @@ public struct NowView: View {
             let windSpeed = now.windSpeed
           {
             GroupBox(
-              label: Label("Wind", systemImage: "wind").foregroundColor(Color(.controlTextColor))
-            ) {
-              HStack {
-                VStack(alignment: .leading, spacing: 2) {
-                  Text("speed").font(.caption).foregroundColor(.secondary)
-                  Text(windSpeed, formatter: Formatters.shared.speed)
-                }
+              label: Label("Wind", systemImage: "wind"),
+              content: {
+                HStack(alignment: .top) {
+                  Label(
+                    title: { Text(windSpeed, formatter: speedFormatter) },
+                    icon: { Text("speed") }
+                  )
+                  .labelStyle(MeasurementLabelStyle())
 
-                Divider().frame(maxHeight: 33)
+                  //Divider().frame(maxHeight: 22)
+                  Text("/")
 
-                VStack(alignment: .leading, spacing: 2) {
-                  Text("direction").font(.caption).foregroundColor(.secondary)
-                  HStack(spacing: 4) {
-                    Text(windDirectionDescription)
-                    // As far as METARs are considered, the wind direction gives the direction from which the wind is coming.
-                    //https://aviation.stackexchange.com/questions/26549/how-is-wind-direction-reported-blowing-from-or-blowing-to
-                    Image(systemName: "arrow.up.circle")
-                      .rotationEffect(.degrees(windDirection.value + 180))
-                      .font(.title3)
-                  }
+                  Label(
+                    title: {
+                      HStack(spacing: 4) {
+                        Text(windDirectionDescription)
+                        // As far as METARs are considered, the wind direction gives the direction from which the wind is coming.
+                        //https://aviation.stackexchange.com/questions/26549/how-is-wind-direction-reported-blowing-from-or-blowing-to
+                        Image(systemName: "arrow.up.circle")
+                          .rotationEffect(.degrees(windDirection.value + 180))
+                          .font(.title3)
+                      }
+                    },
+                    icon: { Text("direction") }
+                  )
+                  .labelStyle(MeasurementLabelStyle())
                 }
-                Spacer()
               }
-            }
+            )
+            .groupBoxStyle(MeasurementGroupBoxStyle(labelColor: Color(.controlTextColor)))
           }
 
           //MARK: Visibility
           if let visibility = now.visibility {
             GroupBox(
-              label: Label("Visibility", systemImage: "eye").foregroundColor(
-                Color(.controlTextColor))
-            ) {
-              HStack {
-                VStack(alignment: .leading) {
-                  Text("distance").font(.caption).foregroundColor(.secondary)
-                  Text(visibility, formatter: Formatters.shared.distance)
-                }
-                Spacer()
+              label: Label("Visibility", systemImage: "eye"),
+              content: {
+                Label(
+                  title: { Text(visibility, formatter: distanceFormatter) },
+                  icon: { Text("distance") }
+                )
+                .labelStyle(MeasurementLabelStyle())
               }
-            }
+            )
+            .groupBoxStyle(MeasurementGroupBoxStyle(labelColor: Color(.controlTextColor)))
           }
         }
-        //MARK: Pressure/Humidity
+
+        //MARK: - Pressure/Humidity
         if let pressure = now.pressure,
           let humidity = now.humidity
         {
@@ -117,10 +124,10 @@ public struct NowView: View {
             pressure: pressure,
             humidity: humidity
           )
+          .frame(minWidth: 200)
         }
       }
     }
-    .frame(maxWidth: .infinity)
 
   }
 }
@@ -130,20 +137,97 @@ struct CombinedGauges: View {
   let humidity: Int
 
   var body: some View {
-    GroupBox(
-      label: Label("Pressure & Humidity", systemImage: "barometer").foregroundColor(
-        Color(.controlTextColor))
-    ) {
-      //FIXME: couldnt make `GeometryReader` work properly
-      Barometer(
-        currentValue: pressure.value,
-        humidity: humidity
-      )
+    //FIXME: couldnt make `GeometryReader` work properly with "Hygrometer"
+    Barometer(
+      currentValue: pressure,
+      humidity: humidity
+    )
+  }
+}
 
-      // ZStack(alignment: .bottom) {
-      //   Barometer(currentValue: pressure.value)
-      //   // Hygrometer(currentValue: humidity)
-      // }
+//MARK: - MeasurementLabelStyle
+
+struct MeasurementLabelStyle: LabelStyle {
+  func makeBody(configuration: Configuration) -> some View {
+    VStack(alignment: .leading) {
+      configuration.title
+      configuration.icon
+        .font(.footnote)
+        .foregroundColor(.secondary)
+
     }
   }
 }
+
+//MARK: - MeasurementGroupBoxStyle
+
+struct MeasurementGroupBoxStyle: GroupBoxStyle {
+  let labelColor: Color
+
+  func makeBody(configuration: Configuration) -> some View {
+    VStack(alignment: .leading, spacing: 4) {
+      configuration.label
+        .font(.callout)
+        .foregroundColor(labelColor)
+      Divider()
+
+      configuration.content
+        .font(.title.bold())
+
+    }
+  }
+}
+
+#if DEBUG
+  struct NowView_Previews: PreviewProvider {
+    static var previews: some View {
+      Group {
+        ScrollView {
+          LazyVStack(pinnedViews: .sectionHeaders) {
+            Section(
+              header: Label("Now", systemImage: "calendar"),
+              content: {
+                NowView(
+                  now: .init(
+                    timestamp: Date(),
+                    sunset: Date().addingTimeInterval(60),
+                    sunrise: Date().addingTimeInterval(60 * 60),
+                    weatherCodeImage: Image("clear-day", bundle: .module),
+                    weatherCodeDescription: "Sunny",
+                    temperature: .init(value: 32, unit: .celsius),
+                    precipitation: .init(value: 0.2, unit: .millimeters),
+                    windDirection: .init(value: 77, unit: .degrees),
+                    windSpeed: .init(value: 38, unit: .kilometersPerHour),
+                    visibility: .init(value: 30, unit: .kilometers),
+                    pressure: .init(value: 1020, unit: .hectopascals),
+                    humidty: 45)
+                )
+              }
+            )
+          }
+        }
+        .background(Color.controlBackground)
+
+        List {
+          NowView(
+            now: .init(
+              timestamp: Date(),
+              sunset: Date().addingTimeInterval(60),
+              sunrise: Date().addingTimeInterval(60 * 60),
+              weatherCodeImage: Image("clear-day", bundle: .module),
+              weatherCodeDescription: "Sunny",
+              temperature: .init(value: 32, unit: .celsius),
+              precipitation: .init(value: 0.2, unit: .millimeters),
+              windDirection: .init(value: 77, unit: .degrees),
+              windSpeed: .init(value: 38, unit: .kilometersPerHour),
+              visibility: .init(value: 30, unit: .kilometers),
+              pressure: .init(value: 1020, unit: .hectopascals),
+              humidty: 45)
+          )
+        }
+        .environment(\.colorScheme, .dark)
+      }
+      .previewLayout(.fixed(width: 300, height: 700))
+    }
+  }
+#endif
