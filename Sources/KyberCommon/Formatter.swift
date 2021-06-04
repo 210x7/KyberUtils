@@ -7,22 +7,6 @@
 
 import Foundation
 
-public let BrightSkyISO8601Formatter: ISO8601DateFormatter = {
-  let formatter = ISO8601DateFormatter()
-  formatter.timeZone = TimeZone.current
-  formatter.formatOptions = [
-    .withColonSeparatorInTime,
-    .withColonSeparatorInTimeZone,
-    .withDashSeparatorInDate,
-    .withYear,
-    .withMonth,
-    .withDay,
-    .withTime,
-    .withTimeZone,
-  ]
-  return formatter
-}()
-
 public let distanceFormatter: MeasurementFormatter = {
   let formatter = MeasurementFormatter()
   formatter.numberFormatter.maximumFractionDigits = 0
