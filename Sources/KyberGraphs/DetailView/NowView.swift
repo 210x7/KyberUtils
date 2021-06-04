@@ -37,13 +37,13 @@ public struct NowView: View {
               Text("--")
             }
           }
-          .font(.largeTitle.bold())
-          .fixedSize()
+          .font(.largeTitle)
 
           Text(now.weatherCodeDescription ?? "--")
-            .font(.subheadline).bold()
+            .font(.subheadline)
         }
       }
+      .padding([.leading, .top])
 
       LazyVGrid(columns: columns, alignment: .leading) {
         VStack(alignment: .leading, spacing: 16) {
@@ -172,7 +172,7 @@ struct MeasurementGroupBoxStyle: GroupBoxStyle {
       Divider()
 
       configuration.content
-        .font(.title.bold())
+        .font(.title2)
 
     }
   }

@@ -42,7 +42,7 @@ public struct Hygrometer: View {
 
         VStack {
           Text(humidityFormatter.string(for: currentValue) ?? "--")
-            .font(.title3.bold())
+            .font(.title3)
           Text("humidity")
             .font(.caption)
             .foregroundColor(.secondary)

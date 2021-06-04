@@ -36,7 +36,7 @@ public struct TomorrowView: View {
                   formatter: temperatureFormatter
                 )
               } else {
-                Text(Formatters.placeholder)
+                Text("--")
               }
             }
             .font(.title2)

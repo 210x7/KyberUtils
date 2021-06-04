@@ -52,7 +52,7 @@ public struct TemperatureGraph: View {
 
           HStack(alignment: .top, spacing: 0) {
             ForEach(groupedDates.sorted(by: { $0.date < $1.date }), id: \.date) {
-              Text($0.date, formatter: Formatters.shared.weekday)
+              Text($0.date, formatter: weekdayFormatter)
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .frame(width: (columnWidth * CGFloat($0.count)) - columnWidth)
@@ -68,7 +68,7 @@ public struct TemperatureGraph: View {
 
             VStack {
               Group {
-                Text("max: ") + Text(maxTemperature, formatter: Formatters.shared.temperature)
+                Text("max: ") + Text(maxTemperature, formatter: temperatureFormatter)
               }
               .padding(2)
               .background(Color.controlBackground)
@@ -77,7 +77,7 @@ public struct TemperatureGraph: View {
               Spacer()
 
               Group {
-                Text("min: ") + Text(minTemperature, formatter: Formatters.shared.temperature)
+                Text("min: ") + Text(minTemperature, formatter: temperatureFormatter)
               }
               .padding(2)
               .background(Color.controlBackground)

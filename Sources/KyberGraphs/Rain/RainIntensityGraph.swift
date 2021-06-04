@@ -85,7 +85,7 @@ public struct RainIntensityGraph: View {
             Spacer()
             if let max = maxPrecipitation {
               Group {
-                Text("max: ") + Text(max, formatter: Formatters.shared.precipitation)
+                Text("max: ") + Text(max, formatter: precipitationFormatter)
               }
               .font(.caption)
               .padding(2).background(Color.controlBackground)

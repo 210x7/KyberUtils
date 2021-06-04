@@ -52,7 +52,7 @@ public struct TemperatureRangeGraph: View {
 
           HStack(alignment: .top, spacing: 0) {
             ForEach(groupedDates.sorted(by: <), id: \.date) {
-              Text($0.date, formatter: Formatters.shared.weekday)
+              Text($0.date, formatter: weekdayFormatter)
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .frame(width: columnWidth)
@@ -67,24 +67,26 @@ public struct TemperatureRangeGraph: View {
           {
             VStack(alignment: .leading) {
               Group {
-                Text("max: ") + Text(maxTemperature, formatter: Formatters.shared.temperature)
-              }.background(Color.controlBackground).offset(y: -2)
+                Text("max: ") + Text(maxTemperature, formatter: temperatureFormatter)
+              }
+              .background(Color.controlBackground).offset(y: -2)
 
               Spacer()
 
               Group {
                 let average: Measurement<UnitTemperature> = ((minTemperature + maxTemperature) / 2)
-                Text("avg: ") + Text(average, formatter: Formatters.shared.temperature)
-              }.background(Color.controlBackground)
+                Text("avg: ") + Text(average, formatter: temperatureFormatter)
+              }
+              .background(Color.controlBackground)
 
               Spacer()
 
               Group {
-                Text("min: ") + Text(minTemperature, formatter: Formatters.shared.temperature)
-              }.background(Color.controlBackground)
+                Text("min: ") + Text(minTemperature, formatter: temperatureFormatter)
+              }
+              .background(Color.controlBackground)
             }
             .font(.caption)
-//            .padding(2)
           }
 
         }

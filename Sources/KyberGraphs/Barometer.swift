@@ -67,7 +67,7 @@ public struct Barometer: View {
             .overlay(
               VStack {
                 Text(pressure, formatter: pressureFormatter)
-                  .font(.title2.bold())
+                  .font(.title2)
                 Text("pressure")
                   .font(.caption)
                   .foregroundColor(.secondary)
