@@ -17,7 +17,7 @@ public struct NowView: View {
   }
 
   let now: WeatherDataPoint
-  let columns: [GridItem] = [.init(.adaptive(minimum: 180, maximum: 360), spacing: 8)]
+  let columns: [GridItem] = [.init(.adaptive(minimum: 180, maximum: 360))]
 
   public var body: some View {
     VStack(alignment: .leading, spacing: 32) {

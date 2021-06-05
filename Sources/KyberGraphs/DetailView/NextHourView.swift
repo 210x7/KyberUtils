@@ -81,10 +81,11 @@ public struct NextHourView: View {
                 Divider().frame(maxHeight: 33)
               }
               Image(systemName: "drop.fill")
-              VStack(alignment: .leading) {
-                Text("amount").font(.caption).foregroundColor(.secondary)
-                Text(precipitation, formatter: precipitationFormatter)
-              }
+              Label(
+                title: { Text(precipitation, formatter: precipitationFormatter) },
+                icon: { Text("amount") }
+              )
+              .labelStyle(MeasurementLabelStyle())
 
               Spacer()
             }
@@ -103,25 +104,29 @@ public struct NextHourView: View {
               }
 
               Image(systemName: "wind")
-              VStack(alignment: .leading, spacing: 2) {
-                Text("speed").font(.caption).foregroundColor(.secondary)
-                Text(windSpeed, formatter: speedFormatter)
-              }
+              Label(
+                title: { Text(windSpeed, formatter: speedFormatter) },
+                icon: { Text("speed") }
+              )
+              .labelStyle(MeasurementLabelStyle())
 
               Divider()
                 .frame(maxHeight: 33)
 
-              VStack(alignment: .leading, spacing: 2) {
-                Text("direction").font(.caption).foregroundColor(.secondary)
-                HStack(spacing: 4) {
-                  Text(windDirectionDescription)
-                  // As far as METARs are considered, the wind direction gives the direction from which the wind is coming.
-                  //https://aviation.stackexchange.com/questions/26549/how-is-wind-direction-reported-blowing-from-or-blowing-to
-                  Image(systemName: "arrow.up.circle")
-                    .rotationEffect(.degrees(windDirection.value + 180))
-                    .font(.title3)
-                }
-              }
+              Label(
+                title: {
+                  HStack(spacing: 4) {
+                    Text(windDirectionDescription)
+                    // As far as METARs are considered, the wind direction gives the direction from which the wind is coming.
+                    //https://aviation.stackexchange.com/questions/26549/how-is-wind-direction-reported-blowing-from-or-blowing-to
+                    Image(systemName: "arrow.up.circle")
+                      .rotationEffect(.degrees(windDirection.value + 180))
+                      .font(.title3)
+                  }
+                },
+                icon: { Text("direction") }
+              )
+              .labelStyle(MeasurementLabelStyle())
               Spacer()
             }
           }
@@ -138,10 +143,12 @@ public struct NextHourView: View {
                 Divider().frame(maxHeight: 33)
               }
               Image(systemName: "eye")
-              VStack(alignment: .leading) {
-                Text("distance").font(.caption).foregroundColor(.secondary)
-                Text(visibility, formatter: distanceFormatter)
-              }
+              Label(
+                title: { Text(visibility, formatter: distanceFormatter) },
+                icon: { Text("distance") }
+              )
+              .labelStyle(MeasurementLabelStyle())
+
               Spacer()
             }
           }
@@ -176,7 +183,7 @@ public struct NextHourView: View {
                     .foregroundColor(.secondary)
                     Divider().frame(height: 33)
                   }
-                  //Image(systemName: "barometer")
+
                   Text(humidityFormatter.string(for: humidity) ?? "--")
                     .padding([.top, .bottom], 4)
                   Spacer()
