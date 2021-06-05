@@ -9,6 +9,7 @@ import ComposableArchitecture
 import KyberAstro
 import KyberCommon
 import KyberGeo
+import StyleGuide
 import SwiftUI
 
 public struct NowView: View {
@@ -142,39 +143,6 @@ struct CombinedGauges: View {
       currentValue: pressure,
       humidity: humidity
     )
-  }
-}
-
-//MARK: - MeasurementLabelStyle
-
-struct MeasurementLabelStyle: LabelStyle {
-  func makeBody(configuration: Configuration) -> some View {
-    VStack(alignment: .leading) {
-      configuration.title
-      configuration.icon
-        .font(.footnote)
-        .foregroundColor(.secondary)
-
-    }
-  }
-}
-
-//MARK: - MeasurementGroupBoxStyle
-
-struct MeasurementGroupBoxStyle: GroupBoxStyle {
-  let labelColor: Color
-
-  func makeBody(configuration: Configuration) -> some View {
-    VStack(alignment: .leading, spacing: 4) {
-      configuration.label
-        .font(.callout)
-        .foregroundColor(labelColor)
-      Divider()
-
-      configuration.content
-        .font(.title2)
-
-    }
   }
 }
 

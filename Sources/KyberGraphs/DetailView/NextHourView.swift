@@ -7,6 +7,7 @@
 
 import KyberCommon
 import KyberGeo
+import StyleGuide
 import SwiftUI
 
 func comparisonIcon<T: Comparable>(previous: T, current: T) -> Image {
