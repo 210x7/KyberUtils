@@ -7,122 +7,100 @@
 
 import KyberCommon
 import SwiftUI
+import SwiftUICharts
 
 public struct TemperatureRangePlotView: View {
   typealias GroupedTemperatureRange = (date: Date, measurements: [Measurement<UnitTemperature>])
 
-  public init(data: [TemperatureData], selectedIndex: Int, containerSize: CGSize) {
-    self.data = data
-    self.selectedIndex = selectedIndex
-    self.containerSize = containerSize
+  private var groupedDates: [GroupedTemperatureRange] = []
+  private let chartData: RangedBarChartData
 
+  public init(data: [TemperatureData], selectedIndex: Int, containerSize: CGSize) {
     let calendar = Calendar.current
-    groupedDates = Dictionary(grouping: data) {
+    self.groupedDates = Dictionary(grouping: data) {
       calendar.dateComponents([.day, .month, .year], from: $0.date)
     }
     .map { (calendar.date(from: $0)!, $1.compactMap(\.measurement)) }
 
-    guard let minTemperature = data.compactMap(\.measurement).min() else {
-      fatalError("Temperature range requires minimum")
-    }
-    self.minTemperature = minTemperature
-
-    guard let maxTemperature = data.compactMap(\.measurement).max() else {
-      fatalError("Temperature range requires maximum")
-    }
-    self.maxTemperature = maxTemperature
-
-    averageTemperature = (minTemperature + maxTemperature) / 2
-
-    columnWidth = containerSize.width / CGFloat(groupedDates.count)
-    base = {
-      if minTemperature.value.sign == .plus {
-        return maxTemperature.value
-      } else {
-        return minTemperature.value.magnitude + maxTemperature.value.magnitude
+    let dataSet: RangedBarDataSet = .init(
+      dataPoints: groupedDates.sorted(by: { $0.date < $1.date }).map {
+        return RangedBarDataPoint(
+          lowerValue: $0.measurements.min()!.value,
+          upperValue: $0.measurements.max()!.value,
+          xAxisLabel: weekdayFormatter.string(from: $0.date)
+        )
       }
-    }()
-  }
-
-  let data: [TemperatureData]
-  let selectedIndex: Int
-  let containerSize: CGSize
-
-  private var groupedDates: [GroupedTemperatureRange] = []
-
-  private let minTemperature: Measurement<UnitTemperature>
-  private let maxTemperature: Measurement<UnitTemperature>
-  private let averageTemperature: Measurement<UnitTemperature>
-
-  private let base: Double
-  private let baseExtraPadding: Double = 3
-  private let columnWidth: CGFloat
-
-  private func offset(value: Double) -> CGFloat {
-    ruleOfThree(
-      base: base,
-      extreme: Double(containerSize.height),
-      given: value
     )
-  }
 
-  private func backgroundHeigth() -> CGFloat {
-    ruleOfThree(
-      base: base,
-      extreme: Double(containerSize.height),
-      given: {
-        switch (maxTemperature.value.sign, minTemperature.value.sign) {
-        case (.plus, .plus):
-          return .zero
-
-        case (.minus, .minus):
-          return base
-
-        case (.plus, .minus):
-          return minTemperature.value.magnitude
-
-        default:
-          return .zero
-        }
-      }()
+    let barStyle: BarStyle = .init(
+      barWidth: 1,
+      cornerRadius: .init(top: 0, bottom: 0),
+      colourFrom: .barStyle,
+      colour: .init(colour: .red)
     )
+
+    let gridStyle = GridStyle(
+      numberOfLines: groupedDates.count + 1,
+      lineColour: Color(.gridColor),
+      lineWidth: 1,
+      dash: [1, 0]
+    )
+
+    let chartStyle = BarChartStyle(
+      infoBoxPlacement: .header,
+      infoBoxContentAlignment: .horizontal,
+      xAxisGridStyle: gridStyle,
+      xAxisLabelPosition: .top,
+      yAxisLabelPosition: .trailing,
+      yAxisNumberOfLabels: 3,
+      globalAnimation: .linear(duration: 0)
+    )
+
+    self.chartData = RangedBarChartData(
+      dataSets: dataSet,
+      barStyle: barStyle,
+      chartStyle: chartStyle
+    )
+
+    ///Requires to be modified ater construction to retrieve correct values for `RangedBarChartData`
+    self.chartData.metadata = .init(
+      title: temperatureFormatter.string(
+        from: Measurement<UnitTemperature>(
+          value: chartData.average,
+          unit: .celsius)
+      ),
+      subtitle: "average"
+    )
+
+    self.chartData.chartStyle.baseline = (chartData.minValue >= 0) ? .zero : .minimumValue
   }
 
   public var body: some View {
-    VStack(spacing: 0) {
-      Rectangle().fill(Color.pink)
-      Rectangle()
-        .fill(Color("AlmostDowny", bundle: .module))
-        .frame(height: backgroundHeigth())
+    VStack {
+      RangedBarChart(chartData: chartData)
+        .touchOverlay(chartData: chartData, specifier: "%.1f", unit: .suffix(of: "ºC"))
+        //.linearTrendLine(
+        //  chartData: data,
+        //  firstValue: data.dataSets.dataPoints.first!.average,
+        //  lastValue: data.dataSets.dataPoints.last!.average
+        //)
+        .averageLine(
+          chartData: chartData,
+          labelPosition: .none,
+          strokeStyle: StrokeStyle(lineWidth: 0.5)
+        )
+        .xAxisGrid(chartData: chartData)
+        .xAxisLabels(chartData: chartData)
+        .yAxisLabels(chartData: chartData)
+        .headerBox(chartData: chartData)
+        //.infoBox(chartData: data)
+        .id(chartData.id)
     }
-    .mask(
-      HStack(spacing: 1) {
-        ForEach(groupedDates.sorted(by: { $0.date < $1.date }), id: \.date) { data in
-          let offset = offset(
-            value: {
-              guard
-                let min = data.measurements.min()?.value,
-                let max = data.measurements.max()?.value
-              else { return 0 }
+  }
+}
 
-              return averageTemperature.value - (max.sign == .plus ? min : max)
-            }()
-          )
-
-          Rectangle()
-            .frame(
-              width: columnWidth,
-              height: ruleOfThree(
-                base: base,
-                extreme: Double(containerSize.height),
-                given: (data.measurements.max()! - data.measurements.min()!).value
-              )
-            )
-            .offset(y: offset)
-        }
-      }
-      .offset(y: -offset(value: averageTemperature.value / 2))
-      .frame(height: containerSize.height)
-    )
+extension RangedBarDataPoint {
+  fileprivate var average: Double {
+    (self.lowerValue + self.upperValue) / 2
   }
 }

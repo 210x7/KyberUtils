@@ -22,13 +22,12 @@ let package = Package(
   dependencies: [
     .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "0.16.0"),
     .package(url: "https://github.com/pointfreeco/composable-core-location", from: "0.1.0"),
+    .package(url: "https://github.com/willdale/SwiftUICharts", from: "2.7.0"),
     .package(
       name: "Introspect",
       url: "https://github.com/siteline/SwiftUI-Introspect",
       from: "0.1.3"
     ),
-    //.package(url: "https://github.com/OAuthSwift/OAuthSwift.git", from: "2.1.0"),
-    //.package(url: "https://github.com/pichukov/LightChart", from: "1.0.0"),
   ],
   targets: [
     // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -47,6 +46,7 @@ let package = Package(
     .target(
       name: "KyberGraphs",
       dependencies: [
+        "SwiftUICharts",
         .target(name: "KyberCommon"),
         .target(name: "KyberAstro"),
       ]),
@@ -73,7 +73,7 @@ let package = Package(
       name: "KyberCommon",
       dependencies: [
         "Introspect",
-        "KyberGeo"
+        "KyberGeo",
       ]
     ),
     .testTarget(

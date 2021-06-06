@@ -7,9 +7,88 @@
 
 import KyberCommon
 import SwiftUI
+import SwiftUICharts
 
 public typealias PrecipitationData = (date: Date, measurement: Measurement<UnitLength>?)
 
+public struct RainIntensityGraph: View {
+  private var chartData: BarChartData
+
+  public init(data: [PrecipitationData], selectedIndex: Int, useSpacing: Bool = false) {
+    let dataSet: BarDataSet = .init(
+      dataPoints: data.compactMap {
+        guard let value = $0.measurement?.value else { return nil }
+        return BarChartDataPoint(
+          value: value,
+          date: $0.date
+        )
+      }
+    )
+
+    let barStyle: BarStyle = .init(
+      barWidth: 0.8,
+      cornerRadius: .init(top: 0, bottom: 0),
+      colourFrom: .barStyle,
+      colour: .init(colour: .purple)
+    )
+
+    let gridStyle = GridStyle(
+      numberOfLines: data.count + 1,
+      lineColour: Color(.gridColor),
+      lineWidth: 1,
+      dash: [1, 0]
+    )
+
+    let chartStyle: BarChartStyle = .init(
+      infoBoxPlacement: .header,  //.infoBox(isStatic: true),
+      infoBoxContentAlignment: .horizontal,
+      markerType: .vertical(),
+      xAxisGridStyle: gridStyle,
+      yAxisLabelPosition: .trailing,
+      yAxisNumberOfLabels: 3,
+      baseline: .zero,
+      topLine: .maximum(
+        of:
+          RainIntensityType
+          .caseFor(amount: dataSet.maxValue())
+          .subjectiveScale
+      ),
+      globalAnimation: .linear(duration: 0)
+    )
+
+    self.chartData = BarChartData(
+      dataSets: dataSet,
+      metadata: .init(
+        title: precipitationFormatter2.string(
+          from: Measurement<UnitLength>(value: dataSet.average(), unit: .millimeters)),
+        subtitle: "average"
+      ),
+      barStyle: barStyle,
+      chartStyle: chartStyle,
+      noDataText: Text("NO DATA")
+    )
+  }
+
+  public var body: some View {
+    VStack {
+      BarChart(chartData: self.chartData)
+        .touchOverlay(chartData: self.chartData, specifier: "%.1f", unit: .suffix(of: "mm"))
+        .averageLine(
+          chartData: chartData,
+          labelPosition: .none,
+          strokeStyle: StrokeStyle(lineWidth: 0.5)
+        )
+        //.xAxisGrid(chartData: self.chartData)
+        .xAxisLabels(chartData: self.chartData)
+        .yAxisLabels(chartData: self.chartData)
+        .headerBox(chartData: chartData)
+        // .infoBox(chartData: data, height: 22)
+        .id(chartData.id)
+    }
+  }
+}
+
+/*
 public struct RainIntensityGraph: View {
   public init(data: [PrecipitationData], selectedIndex: Int, useSpacing: Bool = false) {
     self.data = data
@@ -127,3 +206,4 @@ public struct RainIntensityGraph: View {
     }
   }
 }
+*/

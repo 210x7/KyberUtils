@@ -42,6 +42,14 @@ public let precipitationFormatter: MeasurementFormatter = {
   return formatter
 }()
 
+public let precipitationFormatter2: MeasurementFormatter = {
+  let formatter = MeasurementFormatter()
+  formatter.unitStyle = .short
+  formatter.numberFormatter.maximumFractionDigits = 1
+  formatter.unitOptions = [.providedUnit]
+  return formatter
+}()
+
 public let pressureFormatter: MeasurementFormatter = {
   let formatter = MeasurementFormatter()
   formatter.numberFormatter.maximumFractionDigits = 0

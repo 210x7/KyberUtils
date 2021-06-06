@@ -8,6 +8,34 @@
 import KyberCommon
 import SwiftUI
 
+/*
+public struct TemperatureRangeGraph: View {
+  let data: [TemperatureData]
+  let selectedIndex: Int
+  var filledStyle = false
+
+  private let calendar = Calendar.current
+  private var groupedDates: [(date: Date, count: Int)] = []
+  private var data: BarChartData
+
+  public init(data: [TemperatureData], selectedIndex: Int, filledStyle: Bool = false) {
+    self.data = data
+    self.selectedIndex = selectedIndex
+    self.filledStyle = filledStyle
+    self.groupedDates = Dictionary(grouping: data.map(\.date)) {
+      calendar.dateComponents([.day, .month, .year], from: $0)
+    }
+    .map { (calendar.date(from: $0)!, $1.count) }
+
+    let dataSet: RangedBarDataSet = RangedBarDataSet(dataPoints:
+  }
+
+  public var body: some View {
+    Rectangle()
+  }
+}
+ */
+
 public struct TemperatureRangeGraph: View {
   let data: [TemperatureData]
   let selectedIndex: Int
@@ -27,6 +55,12 @@ public struct TemperatureRangeGraph: View {
   }
 
   public var body: some View {
+    TemperatureRangePlotView(
+      data: data,
+      selectedIndex: selectedIndex,
+      containerSize: .zero
+    )
+    /*
     GeometryReader { proxy in
       ZStack(alignment: .leading) {
         if data.isEmpty {
@@ -93,5 +127,6 @@ public struct TemperatureRangeGraph: View {
       }
     }
     // .drawingGroup() //Creates problems with masks used in the `PlotView`
+ */
   }
 }
