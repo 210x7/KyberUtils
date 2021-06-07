@@ -9,7 +9,15 @@ import KyberCommon
 import SwiftUI
 import SwiftUICharts
 
-public typealias PrecipitationData = (date: Date, measurement: Measurement<UnitLength>?)
+public struct PrecipitationData: Equatable {
+  public let date: Date
+  public let measurement: Measurement<UnitLength>?
+
+  public init(date: Date, measurement: Measurement<UnitLength>?) {
+    self.date = date
+    self.measurement = measurement
+  }
+}
 
 public struct RainIntensityGraph: View {
   private var chartData: BarChartData

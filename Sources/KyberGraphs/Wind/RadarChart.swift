@@ -32,7 +32,7 @@ public struct RadarChart: View {
             .fill(dataColor.opacity(0.3))
 
           RadarChartPath(data: data)
-            .stroke(dataColor, lineWidth: 2.0)
+            .stroke(dataColor, lineWidth: 1.0)
         }
         
         Text("E")

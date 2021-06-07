@@ -16,7 +16,15 @@ import SwiftUI
 /// Saturated air: 48 °C (118 °F) short term, 35 °C (95 °F) long term.
 /// Water: 46° C (115 °F) short term, 41°C (106 °F) long term.
 
-public typealias TemperatureData = (date: Date, measurement: Measurement<UnitTemperature>?)
+public struct TemperatureData: Equatable {
+  public let date: Date
+  public let measurement: Measurement<UnitTemperature>?
+
+  public init(date: Date, measurement: Measurement<UnitTemperature>?) {
+    self.date = date
+    self.measurement = measurement
+  }
+}
 
 public struct TemperatureGraph: View {
   public init(data: [TemperatureData], selectedIndex: Int) {
