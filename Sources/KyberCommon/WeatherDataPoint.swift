@@ -9,7 +9,7 @@ import SwiftUI
 
 /// Adapter to homogenize values coming from different APIs but presented using similar components
 /// (e.g DWD, ClimaCell)
-public struct WeatherDataPoint {
+public struct WeatherDataPoint: Equatable {
   public init(
     timestamp: Date,
     sunset: Date?,
