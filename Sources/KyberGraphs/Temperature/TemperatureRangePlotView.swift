@@ -78,7 +78,7 @@ public struct TemperatureRangePlotView: View {
   public var body: some View {
     VStack {
       RangedBarChart(chartData: chartData)
-        .touchOverlay(chartData: chartData, specifier: "%.1f", unit: .suffix(of: "ºC"))
+        .touchOverlay(chartData: chartData, specifier: "%.0f", unit: .suffix(of: "ºC"))
         //.linearTrendLine(
         //  chartData: data,
         //  firstValue: data.dataSets.dataPoints.first!.average,

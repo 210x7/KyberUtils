@@ -10,16 +10,6 @@ import KyberGeo
 import StyleGuide
 import SwiftUI
 
-func comparisonIcon<T: Comparable>(previous: T, current: T) -> Image {
-  if previous > current {
-    return Image(systemName: "arrow.down")
-  } else if previous < current {
-    return Image(systemName: "arrow.up")
-  } else {
-    return Image(systemName: "equal")
-  }
-}
-
 public struct NextHourView: View {
   public init(now: WeatherDataPoint?, nextHour: WeatherDataPoint) {
     self.now = now
@@ -57,9 +47,10 @@ public struct NextHourView: View {
               previous: previousTemperature,
               current: temperature
             )
-            .foregroundColor(.secondary)
+            .font(.caption)
 
-            Divider().frame(maxHeight: 33)
+            Divider()
+              .frame(height: 22)
           }
 
           Text(condition)
@@ -77,9 +68,9 @@ public struct NextHourView: View {
                   previous: previousPrecipitation,
                   current: precipitation
                 )
-                .foregroundColor(.secondary)
+                .font(.caption)
 
-                Divider().frame(maxHeight: 33)
+                Divider()
               }
               Image(systemName: "drop.fill")
               Label(
@@ -91,6 +82,7 @@ public struct NextHourView: View {
               Spacer()
             }
           }
+          .frame(minHeight: 44)
 
           //MARK: Wind
           GroupBox {
@@ -100,8 +92,9 @@ public struct NextHourView: View {
                   previous: previousWindSpeed,
                   current: windSpeed
                 )
-                .foregroundColor(.secondary)
-                Divider().frame(maxHeight: 33)
+                .font(.caption)
+
+                Divider()
               }
 
               Image(systemName: "wind")
@@ -112,7 +105,6 @@ public struct NextHourView: View {
               .labelStyle(MeasurementLabelStyle())
 
               Divider()
-                .frame(maxHeight: 33)
 
               Label(
                 title: {
@@ -128,9 +120,11 @@ public struct NextHourView: View {
                 icon: { Text("direction") }
               )
               .labelStyle(MeasurementLabelStyle())
+
               Spacer()
             }
           }
+          .frame(minHeight: 44)
 
           //MARK: Visibility
           GroupBox {
@@ -140,8 +134,9 @@ public struct NextHourView: View {
                   previous: previousVisibility,
                   current: visibility
                 )
-                .foregroundColor(.secondary)
-                Divider().frame(maxHeight: 33)
+                .font(.caption)
+
+                Divider()
               }
               Image(systemName: "eye")
               Label(
@@ -153,10 +148,11 @@ public struct NextHourView: View {
               Spacer()
             }
           }
+          .frame(minHeight: 44)
 
           //MARK: Pressure/Humidity
           GroupBox {
-            VStack(spacing: 0) {
+            VStack {
               if let pressure = nextHour.pressure {
                 HStack {
                   if let previousPressure = now?.pressure {
@@ -164,12 +160,13 @@ public struct NextHourView: View {
                       previous: previousPressure,
                       current: pressure
                     )
-                    .foregroundColor(.secondary)
-                    Divider().frame(height: 33)
+                    .font(.caption)
+
+                    Divider()
                   }
                   Image(systemName: "barometer")
-                  Text(pressure, formatter: pressureFormatter).padding(
-                    [.top, .bottom], 4)
+                  Text(pressure, formatter: pressureFormatter)
+
                   Spacer()
                 }
               }
@@ -181,17 +178,19 @@ public struct NextHourView: View {
                       previous: previousHumidity,
                       current: humidity
                     )
-                    .foregroundColor(.secondary)
-                    Divider().frame(height: 33)
+                    .font(.caption)
+
+                    Divider()
                   }
 
                   Text(humidityFormatter.string(for: humidity) ?? "--")
-                    .padding([.top, .bottom], 4)
+
                   Spacer()
                 }
               }
             }
           }
+          .frame(minHeight: 44)
         }
       }
     }

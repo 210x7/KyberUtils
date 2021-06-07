@@ -44,7 +44,6 @@ public struct NowView: View {
             .font(.subheadline)
         }
       }
-      .padding([.leading, .top])
 
       LazyVGrid(columns: columns, alignment: .leading) {
         VStack(alignment: .leading, spacing: 16) {
